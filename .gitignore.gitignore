@@ -1,0 +1,47 @@
+syntax:glob
+
+.DS_Store
+
+# Maven build artifacts
+target
+log
+
+# IntelliJ IDEA project files
+*.iml
+*.ipr
+*.ids
+*.iws
+*.clover
+.idea
+
+# Eclipse project files
+.classpath
+.project
+.settings
+
+# Maven relase leftovers
+*.releaseBackup
+
+# Flex project file
+*.actionScriptProperties
+*.flexProperties
+bin-debug
+bin
+
+# Backup files
+*~
+*.orig
+
+# Put additional ignore patterns here
+admin-java-backend\test.log
+
+#local ant files
+build.xml
+
+#Atlassian IDE plugin config file
+atlassian-ide-plugin.xml
+
+#ignore cobertura files
+*.ser
+#
+#

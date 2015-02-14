@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<assembly>
+   <!-- id>distribution</id -->
+   <formats>
+      <format>zip</format>
+   </formats>
+   <includeBaseDirectory>false</includeBaseDirectory>
+   <fileSets>
+        <fileSet>
+            <directory>src/main/resources</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>**/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+   <dependencySets>
+      <dependencySet>
+         <includes>
+            <include>commons-lang:commons-lang:jar</include>
+            <include>trading:backend:jar</include>  
+         </includes>
+         <unpack>false</unpack>
+         <outputDirectory>lib</outputDirectory>
+      </dependencySet>
+   </dependencySets>
+</assembly>
