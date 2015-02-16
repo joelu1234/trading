@@ -6,7 +6,8 @@
 	<version>1.0.0</version>
 	<name>Trading</name>
 	<packaging>pom</packaging>
-	<url>http://maven.apache.org</url>
+	<url>http://maven.apache.org</url>'
+	
 	<modules>
 		<module>backend</module>
 		<module>distribution</module>
