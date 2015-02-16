@@ -27,6 +27,7 @@ log
 *.flexProperties
 bin-debug
 bin
+logs
 
 # Backup files
 *~

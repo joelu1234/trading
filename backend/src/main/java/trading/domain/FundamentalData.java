@@ -1,16 +1,15 @@
 package trading.domain;
 
 public class FundamentalData {
-	private boolean optionable;
-	private long marketCap;
 	private long shareOutstanding;
 	private long shartFloat;
 	private float institutionOwn;
 	private long shortFloat;
 	private float bookPerShare;
 	private float cashPerShare;
-	private float dividend; // div payout ratio = div/eps
+	private float dividend = 0.0f; // div payout ratio = div/eps
 	private float divGrowthRate5Yr;
+	private float peg;
 	private float eps;
 	private float epsNextYear;
 	private float roa;
@@ -30,20 +29,12 @@ public class FundamentalData {
 	private float high52weeks;
 	private float low52weeks;
 
-	public boolean isOptionable() {
-		return optionable;
+	public float getPeg() {
+		return peg;
 	}
 
-	public void setOptionable(boolean optionable) {
-		this.optionable = optionable;
-	}
-
-	public long getMarketCap() {
-		return marketCap;
-	}
-
-	public void setMarketCap(long marketCap) {
-		this.marketCap = marketCap;
+	public void setPeg(float peg) {
+		this.peg = peg;
 	}
 
 	public long getShareOutstanding() {

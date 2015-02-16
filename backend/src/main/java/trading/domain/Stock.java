@@ -2,6 +2,7 @@ package trading.domain;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -14,12 +15,21 @@ public class Stock {
 	private String ticker;
 	private String sector;
 	private String industry;
-	private String index;
 	private StockType stockType;
-	private FundamentalData FundamentalData;
-	private List<OptionData> options;
-	private List<Quote> quotes;
+	private boolean optionable;
+	private List<String> indices=new ArrayList<String>();
+	private FundamentalData FundamentalData =new FundamentalData();
+	private List<OptionData> options=new  ArrayList<OptionData>();
+	private List<Quote> quotes = new ArrayList<Quote>() ;
 
+	public boolean isOptionable() {
+		return optionable;
+	}
+
+	public void setOptionable(boolean optionable) {
+		this.optionable = optionable;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -52,12 +62,12 @@ public class Stock {
 		this.industry = industry;
 	}
 
-	public String getIndex() {
-		return index;
+	public List<String> getIndices() {
+		return indices;
 	}
 
-	public void setIndex(String index) {
-		this.index = index;
+	public void setIndices(List<String> indices) {
+		this.indices = indices;
 	}
 
 	public StockType getStockType() {
