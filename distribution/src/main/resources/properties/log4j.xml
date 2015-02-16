@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="false">
+
+	<appender name="DEBUG_FILE" class="trading.util.DailyRollingFileAppender">
+		<param name="File" value="logs/trading.log" />
+		<param name="Append" value="true" />
+		<param name="Threshold" value="DEBUG" />
+		<param name="MaxDaysOld" value="5" />
+		<param name="DatePattern" value="yyyy-MM-dd'.'" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %-5p %t [%c] %m%n" />
+		</layout>
+	</appender>
+
+	<category name="org.codehaus.jackson">
+		<priority value="DEBUG" />
+	</category>
+
+	<category name="trading">
+		<priority value="DEBUG" />
+	</category>
+
+	<!-- log sql params, not result set. -->
+	<category name="java.sql.PreparedStatement">
+		<priority value="DEBUG" />
+	</category>
+	<category name="java.sql.Connection">
+		<priority value="DEBUG" />
+	</category>
+
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="DEBUG_FILE" />
+	</root>
+</log4j:configuration>
+

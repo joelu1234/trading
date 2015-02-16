@@ -1,6 +1,13 @@
 package trading.domain;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class Stock {
 	private String name;
@@ -84,4 +91,26 @@ public class Stock {
 	public void setQuotes(List<Quote> quotes) {
 		this.quotes = quotes;
 	}
+
+	@Override
+	public String toString() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Throwable th) {
+			th.printStackTrace();
+			return null;
+		}
+	}
+
+	public void toJSONFile(File file) throws JsonGenerationException,
+			JsonMappingException, IOException {
+		new ObjectMapper().writeValue(file, this);
+	}
+
+	public static Stock fromJSONFile(File file) throws JsonParseException,
+			JsonMappingException, IOException {
+		return new ObjectMapper().readValue(file, Stock.class);
+	}
+
 }

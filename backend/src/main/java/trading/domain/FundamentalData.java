@@ -27,8 +27,8 @@ public class FundamentalData {
 	private float totalDebt;
 	private float debtOverEquity;
 	private long operationCashFlow;
-	private long high52Weeks;
-	private long low52Weeks;
+	private float high52weeks;
+	private float low52weeks;
 
 	public boolean isOptionable() {
 		return optionable;
@@ -238,20 +238,20 @@ public class FundamentalData {
 		this.operationCashFlow = operationCashFlow;
 	}
 
-	public long getHigh52Weeks() {
-		return high52Weeks;
+	public float getHigh52weeks() {
+		return high52weeks;
 	}
 
-	public void setHigh52Weeks(long high52Weeks) {
-		this.high52Weeks = high52Weeks;
+	public void setHigh52weeks(float high52weeks) {
+		this.high52weeks = high52weeks;
 	}
 
-	public long getLow52Weeks() {
-		return low52Weeks;
+	public float getLow52weeks() {
+		return low52weeks;
 	}
 
-	public void setLow52Weeks(long low52Weeks) {
-		this.low52Weeks = low52Weeks;
+	public void setLow52weeks(float low52weeks) {
+		this.low52weeks = low52weeks;
 	}
 
 }
