@@ -8,7 +8,9 @@ final public class PropertyManager {
 
 	final public static String FINVIZ_STATS = "trading.receiver.finviz.stats";
 	final public static String REUTERS_STATS = "trading.reciever.reuters.stats";
-
+	final public static String YAHOO_STATS = "trading.reciever.yahoo.stats";
+	final public static String YAHOO_AE = "trading.reciever.yahoo.ae";
+	
 	final public static String MAIL_SMTPS_AUTH = "mail.smtps.auth";
 	final public static String MAIL_SMTPS_HOST = "mail.smtps.host";
 	final public static String MAIL_SMTPS_PORT = "mail.smtps.port";

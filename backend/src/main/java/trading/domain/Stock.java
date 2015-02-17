@@ -13,6 +13,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 public class Stock {
 	private String name;
 	private String ticker;
+	private String exchange;
 	private String sector;
 	private String industry;
 	private StockType stockType;
@@ -20,7 +21,17 @@ public class Stock {
 	private List<String> indices=new ArrayList<String>();
 	private FundamentalData FundamentalData =new FundamentalData();
 	private List<OptionData> options=new  ArrayList<OptionData>();
-	private List<Quote> quotes = new ArrayList<Quote>() ;
+	private List<Quote> quotes = new ArrayList<Quote>();
+	private List<AnalystOpinion> opinions = new ArrayList<AnalystOpinion>(); 
+	private List<QuartlyEps> epsHistory = new ArrayList<QuartlyEps>(); 
+
+	public String getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
+	}
 
 	public boolean isOptionable() {
 		return optionable;
@@ -100,6 +111,22 @@ public class Stock {
 
 	public void setQuotes(List<Quote> quotes) {
 		this.quotes = quotes;
+	}
+
+	public List<AnalystOpinion> getOpinions() {
+		return opinions;
+	}
+
+	public void setOpinions(List<AnalystOpinion> opinions) {
+		this.opinions = opinions;
+	}
+
+	public List<QuartlyEps> getEpsHistory() {
+		return epsHistory;
+	}
+
+	public void setEpsHistory(List<QuartlyEps> epsHistory) {
+		this.epsHistory = epsHistory;
 	}
 
 	@Override

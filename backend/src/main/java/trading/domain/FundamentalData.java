@@ -1,191 +1,262 @@
 package trading.domain;
 
 public class FundamentalData {
-	private long shareOutstanding;
-	private long shartFloat;
-	private float institutionOwn;
-	private long shortFloat;
-	private float bookPerShare;
-	private float cashPerShare;
-	private float dividend = 0.0f; // div payout ratio = div/eps
-	private float divGrowthRate5Yr;
-	private float peg;
-	private float eps;
-	private float epsNextYear;
-	private float roa;
-	private float roe;
-	private float grossMargin;
-	private float operationMargin;
-	private float profitMargin;
-	private float beta;
-	private float peHight5yrs;
-	private float peLow5yrs;
-	private long avgVol;
+	private Long shareOutstanding;
+	private Long shareFloat;
+	private Float bookPerShare;
+	private Float cashPerShare;
+	private Float dividend = 0.0f; // div payout ratio = div/eps
+	private Float peg;
+	private Float eps;
+	private Float epsNextYear;
+	private Float epsThisYearChange;
+	private Float epsNextYearChange;
+	private Float epsNext5YearChange;
+	private Float epsPast5YearChange;
+	private Float salesPast5YearChange;
+	private Float salesQQ;
+	private Float epsQQ;
+	private Float insiderOwn;
+	private Float institutionOwn;
+	private Float roa;
+	private Float roe;
+	private Float roi;
+	private Float grossMargin;
+	private Float operationMargin;
+	private Float profitMargin;
+	private Float shortFloatPercent;
+	private Float shortRatio;
+	private Float beta;
+	private Long avgVol;
 	private String earningDate;
-	private float recommendationRate;
-	private float totalDebt;
-	private float debtOverEquity;
-	private long operationCashFlow;
-	private float high52weeks;
-	private float low52weeks;
+	private Float recommendationRate;
+	private Float debtOverEquity;
 
-	public float getPeg() {
-		return peg;
-	}
+	private Float divGrowthRate5Yr;
+	private Float peHight5yrs;
+	private Float peLow5yrs;
 
-	public void setPeg(float peg) {
-		this.peg = peg;
-	}
+	private Long ebitda;
+	private Long totalDebt;
+	private Long operationCashFlow;
+	private Long leveredFreeCashFlow;
 
-	public long getShareOutstanding() {
+	private Float high52weeks;
+	private Float low52weeks;
+
+	public Long getShareOutstanding() {
 		return shareOutstanding;
 	}
 
-	public void setShareOutstanding(long shareOutstanding) {
+	public void setShareOutstanding(Long shareOutstanding) {
 		this.shareOutstanding = shareOutstanding;
 	}
 
-	public long getShartFloat() {
-		return shartFloat;
+	public Long getShareFloat() {
+		return shareFloat;
 	}
 
-	public void setShartFloat(long shartFloat) {
-		this.shartFloat = shartFloat;
+	public void setShareFloat(Long shareFloat) {
+		this.shareFloat = shareFloat;
 	}
 
-	public float getInstitutionOwn() {
-		return institutionOwn;
-	}
-
-	public void setInstitutionOwn(float institutionOwn) {
-		this.institutionOwn = institutionOwn;
-	}
-
-	public long getShortFloat() {
-		return shortFloat;
-	}
-
-	public void setShortFloat(long shortFloat) {
-		this.shortFloat = shortFloat;
-	}
-
-	public float getBookPerShare() {
+	public Float getBookPerShare() {
 		return bookPerShare;
 	}
 
-	public void setBookPerShare(float bookPerShare) {
+	public void setBookPerShare(Float bookPerShare) {
 		this.bookPerShare = bookPerShare;
 	}
 
-	public float getCashPerShare() {
+	public Float getCashPerShare() {
 		return cashPerShare;
 	}
 
-	public void setCashPerShare(float cashPerShare) {
+	public void setCashPerShare(Float cashPerShare) {
 		this.cashPerShare = cashPerShare;
 	}
 
-	public float getDividend() {
+	public Float getDividend() {
 		return dividend;
 	}
 
-	public void setDividend(float dividend) {
+	public void setDividend(Float dividend) {
 		this.dividend = dividend;
 	}
 
-	public float getDivGrowthRate5Yr() {
-		return divGrowthRate5Yr;
+	public Float getPeg() {
+		return peg;
 	}
 
-	public void setDivGrowthRate5Yr(float divGrowthRate5Yr) {
-		this.divGrowthRate5Yr = divGrowthRate5Yr;
+	public void setPeg(Float peg) {
+		this.peg = peg;
 	}
 
-	public float getEps() {
+	public Float getEps() {
 		return eps;
 	}
 
-	public void setEps(float eps) {
+	public void setEps(Float eps) {
 		this.eps = eps;
 	}
 
-	public float getEpsNextYear() {
+	public Float getEpsNextYear() {
 		return epsNextYear;
 	}
 
-	public void setEpsNextYear(float epsNextYear) {
+	public void setEpsNextYear(Float epsNextYear) {
 		this.epsNextYear = epsNextYear;
 	}
 
-	public float getRoa() {
+	public Float getEpsThisYearChange() {
+		return epsThisYearChange;
+	}
+
+	public void setEpsThisYearChange(Float epsThisYearChange) {
+		this.epsThisYearChange = epsThisYearChange;
+	}
+
+	public Float getEpsNextYearChange() {
+		return epsNextYearChange;
+	}
+
+	public void setEpsNextYearChange(Float epsNextYearChange) {
+		this.epsNextYearChange = epsNextYearChange;
+	}
+
+	public Float getEpsNext5YearChange() {
+		return epsNext5YearChange;
+	}
+
+	public void setEpsNext5YearChange(Float epsNext5YearChange) {
+		this.epsNext5YearChange = epsNext5YearChange;
+	}
+
+	public Float getEpsPast5YearChange() {
+		return epsPast5YearChange;
+	}
+
+	public void setEpsPast5YearChange(Float epsPast5YearChange) {
+		this.epsPast5YearChange = epsPast5YearChange;
+	}
+
+	public Float getSalesPast5YearChange() {
+		return salesPast5YearChange;
+	}
+
+	public void setSalesPast5YearChange(Float salesPast5YearChange) {
+		this.salesPast5YearChange = salesPast5YearChange;
+	}
+
+	public Float getSalesQQ() {
+		return salesQQ;
+	}
+
+	public void setSalesQQ(Float salesQQ) {
+		this.salesQQ = salesQQ;
+	}
+
+	public Float getEpsQQ() {
+		return epsQQ;
+	}
+
+	public void setEpsQQ(Float epsQQ) {
+		this.epsQQ = epsQQ;
+	}
+
+	public Float getInsiderOwn() {
+		return insiderOwn;
+	}
+
+	public void setInsiderOwn(Float insiderOwn) {
+		this.insiderOwn = insiderOwn;
+	}
+
+	public Float getInstitutionOwn() {
+		return institutionOwn;
+	}
+
+	public void setInstitutionOwn(Float institutionOwn) {
+		this.institutionOwn = institutionOwn;
+	}
+
+	public Float getRoa() {
 		return roa;
 	}
 
-	public void setRoa(float roa) {
+	public void setRoa(Float roa) {
 		this.roa = roa;
 	}
 
-	public float getRoe() {
+	public Float getRoe() {
 		return roe;
 	}
 
-	public void setRoe(float roe) {
+	public void setRoe(Float roe) {
 		this.roe = roe;
 	}
 
-	public float getGrossMargin() {
+	public Float getRoi() {
+		return roi;
+	}
+
+	public void setRoi(Float roi) {
+		this.roi = roi;
+	}
+
+	public Float getGrossMargin() {
 		return grossMargin;
 	}
 
-	public void setGrossMargin(float grossMargin) {
+	public void setGrossMargin(Float grossMargin) {
 		this.grossMargin = grossMargin;
 	}
 
-	public float getOperationMargin() {
+	public Float getOperationMargin() {
 		return operationMargin;
 	}
 
-	public void setOperationMargin(float operationMargin) {
+	public void setOperationMargin(Float operationMargin) {
 		this.operationMargin = operationMargin;
 	}
 
-	public float getProfitMargin() {
+	public Float getProfitMargin() {
 		return profitMargin;
 	}
 
-	public void setProfitMargin(float profitMargin) {
+	public void setProfitMargin(Float profitMargin) {
 		this.profitMargin = profitMargin;
 	}
 
-	public float getBeta() {
+	public Float getShortFloatPercent() {
+		return shortFloatPercent;
+	}
+
+	public void setShortFloatPercent(Float shortFloatPercent) {
+		this.shortFloatPercent = shortFloatPercent;
+	}
+
+	public Float getShortRatio() {
+		return shortRatio;
+	}
+
+	public void setShortRatio(Float shortRatio) {
+		this.shortRatio = shortRatio;
+	}
+
+	public Float getBeta() {
 		return beta;
 	}
 
-	public void setBeta(float beta) {
+	public void setBeta(Float beta) {
 		this.beta = beta;
 	}
 
-	public float getPeHight5yrs() {
-		return peHight5yrs;
-	}
-
-	public void setPeHight5yrs(float peHight5yrs) {
-		this.peHight5yrs = peHight5yrs;
-	}
-
-	public float getPeLow5yrs() {
-		return peLow5yrs;
-	}
-
-	public void setPeLow5yrs(float peLow5yrs) {
-		this.peLow5yrs = peLow5yrs;
-	}
-
-	public long getAvgVol() {
+	public Long getAvgVol() {
 		return avgVol;
 	}
 
-	public void setAvgVol(long avgVol) {
+	public void setAvgVol(Long avgVol) {
 		this.avgVol = avgVol;
 	}
 
@@ -197,52 +268,92 @@ public class FundamentalData {
 		this.earningDate = earningDate;
 	}
 
-	public float getRecommendationRate() {
+	public Float getRecommendationRate() {
 		return recommendationRate;
 	}
 
-	public void setRecommendationRate(float recommendationRate) {
+	public void setRecommendationRate(Float recommendationRate) {
 		this.recommendationRate = recommendationRate;
 	}
 
-	public float getTotalDebt() {
-		return totalDebt;
-	}
-
-	public void setTotalDebt(float totalDebt) {
-		this.totalDebt = totalDebt;
-	}
-
-	public float getDebtOverEquity() {
+	public Float getDebtOverEquity() {
 		return debtOverEquity;
 	}
 
-	public void setDebtOverEquity(float debtOverEquity) {
+	public void setDebtOverEquity(Float debtOverEquity) {
 		this.debtOverEquity = debtOverEquity;
 	}
 
-	public long getOperationCashFlow() {
+	public Float getDivGrowthRate5Yr() {
+		return divGrowthRate5Yr;
+	}
+
+	public void setDivGrowthRate5Yr(Float divGrowthRate5Yr) {
+		this.divGrowthRate5Yr = divGrowthRate5Yr;
+	}
+
+	public Float getPeHight5yrs() {
+		return peHight5yrs;
+	}
+
+	public void setPeHight5yrs(Float peHight5yrs) {
+		this.peHight5yrs = peHight5yrs;
+	}
+
+	public Float getPeLow5yrs() {
+		return peLow5yrs;
+	}
+
+	public void setPeLow5yrs(Float peLow5yrs) {
+		this.peLow5yrs = peLow5yrs;
+	}
+
+	public Long getOperationCashFlow() {
 		return operationCashFlow;
 	}
 
-	public void setOperationCashFlow(long operationCashFlow) {
+	public void setOperationCashFlow(Long operationCashFlow) {
 		this.operationCashFlow = operationCashFlow;
 	}
 
-	public float getHigh52weeks() {
+	public Float getHigh52weeks() {
 		return high52weeks;
 	}
 
-	public void setHigh52weeks(float high52weeks) {
+	public void setHigh52weeks(Float high52weeks) {
 		this.high52weeks = high52weeks;
 	}
 
-	public float getLow52weeks() {
+	public Float getLow52weeks() {
 		return low52weeks;
 	}
 
-	public void setLow52weeks(float low52weeks) {
+	public void setLow52weeks(Float low52weeks) {
 		this.low52weeks = low52weeks;
+	}
+
+	public Long getEbitda() {
+		return ebitda;
+	}
+
+	public void setEbitda(Long ebitda) {
+		this.ebitda = ebitda;
+	}
+
+	public Long getTotalDebt() {
+		return totalDebt;
+	}
+
+	public void setTotalDebt(Long totalDebt) {
+		this.totalDebt = totalDebt;
+	}
+
+	public Long getLeveredFreeCashFlow() {
+		return leveredFreeCashFlow;
+	}
+
+	public void setLeveredFreeCashFlow(Long leveredFreeCashFlow) {
+		this.leveredFreeCashFlow = leveredFreeCashFlow;
 	}
 
 }
