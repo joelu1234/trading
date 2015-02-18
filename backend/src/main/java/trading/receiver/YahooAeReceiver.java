@@ -2,6 +2,7 @@ package trading.receiver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
@@ -32,7 +33,7 @@ public class YahooAeReceiver {
 	    	String str = values[values.length-2]+" "+values[values.length-1];
 	    	eps.setQtr(new SimpleDateFormat(DATE_FORMAT).parse(str));
 	    	eps.setEps(Float.parseFloat(contents.get(i).text()));
-	    	stock.getEpsHistory().add(eps);
+	    	stock.getFundamentalData().getEpsHistory().add(eps);
 	    }
 	}
 	
@@ -45,14 +46,15 @@ public class YahooAeReceiver {
 		Document doc = Jsoup.connect(url).get();
 		fetchValues(doc, stock,":containsOwn(Earnings Est)",2);
 		fetchValues(doc, stock,":containsOwn(Earnings History)",4);
+		Collections.sort(stock.getFundamentalData().getEpsHistory());
 
 	}
 
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.setStockType(StockType.STOCK);
-		stock.setExchange("[NYSE]");
+		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setExchange("[NYSE]");
 		fetch(stock);
 		System.out.println(stock);
 	}

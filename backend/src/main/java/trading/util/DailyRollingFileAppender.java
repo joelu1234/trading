@@ -38,6 +38,20 @@ public class DailyRollingFileAppender extends FileAppender {
 
 	static final int TOP_OF_MONTH = 5;
 
+	String fileSystemProperty;
+
+	public String getFileSystemProperty() {
+		return fileSystemProperty;
+	}
+
+	public void setFileSystemProperty(String fileSystemProperty) {
+		String dynamicFileName = System.getProperty(fileSystemProperty);
+		if (dynamicFileName != null) {
+			this.fileSystemProperty = fileSystemProperty;
+			setFile(dynamicFileName);
+		} 
+	}
+
 	/**
 	 * The date pattern. By default, the pattern is set to "'.'yyyy-MM-dd"
 	 * meaning daily rollover.

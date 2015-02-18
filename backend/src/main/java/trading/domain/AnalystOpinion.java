@@ -50,6 +50,6 @@ public class AnalystOpinion implements Comparable<AnalystOpinion> {
 	}
 
 	public int compareTo(AnalystOpinion arg0) {
-		return this.date.compareTo(arg0.date);
+		return arg0.date.compareTo(this.date);
 	}
 }

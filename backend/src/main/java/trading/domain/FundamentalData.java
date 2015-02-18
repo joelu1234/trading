@@ -1,6 +1,17 @@
 package trading.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FundamentalData {
+
+	private String name;
+	private String exchange;
+	private String sector;
+	private String industry;
+	private StockType stockType;
+	private boolean optionable;
+
 	private Long shareOutstanding;
 	private Long shareFloat;
 	private Float bookPerShare;
@@ -43,6 +54,58 @@ public class FundamentalData {
 
 	private Float high52weeks;
 	private Float low52weeks;
+
+	private List<String> indices=new ArrayList<String>();
+	private List<AnalystOpinion> opinions = new ArrayList<AnalystOpinion>(); 
+	private List<QuartlyEps> epsHistory = new ArrayList<QuartlyEps>(); 
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
+	}
+
+	public String getSector() {
+		return sector;
+	}
+
+	public void setSector(String sector) {
+		this.sector = sector;
+	}
+
+	public String getIndustry() {
+		return industry;
+	}
+
+	public void setIndustry(String industry) {
+		this.industry = industry;
+	}
+
+	public StockType getStockType() {
+		return stockType;
+	}
+
+	public void setStockType(StockType stockType) {
+		this.stockType = stockType;
+	}
+
+	public boolean isOptionable() {
+		return optionable;
+	}
+
+	public void setOptionable(boolean optionable) {
+		this.optionable = optionable;
+	}
 
 	public Long getShareOutstanding() {
 		return shareOutstanding;
@@ -308,12 +371,36 @@ public class FundamentalData {
 		this.peLow5yrs = peLow5yrs;
 	}
 
+	public Long getEbitda() {
+		return ebitda;
+	}
+
+	public void setEbitda(Long ebitda) {
+		this.ebitda = ebitda;
+	}
+
+	public Long getTotalDebt() {
+		return totalDebt;
+	}
+
+	public void setTotalDebt(Long totalDebt) {
+		this.totalDebt = totalDebt;
+	}
+
 	public Long getOperationCashFlow() {
 		return operationCashFlow;
 	}
 
 	public void setOperationCashFlow(Long operationCashFlow) {
 		this.operationCashFlow = operationCashFlow;
+	}
+
+	public Long getLeveredFreeCashFlow() {
+		return leveredFreeCashFlow;
+	}
+
+	public void setLeveredFreeCashFlow(Long leveredFreeCashFlow) {
+		this.leveredFreeCashFlow = leveredFreeCashFlow;
 	}
 
 	public Float getHigh52weeks() {
@@ -332,28 +419,28 @@ public class FundamentalData {
 		this.low52weeks = low52weeks;
 	}
 
-	public Long getEbitda() {
-		return ebitda;
+	public List<String> getIndices() {
+		return indices;
 	}
 
-	public void setEbitda(Long ebitda) {
-		this.ebitda = ebitda;
+	public void setIndices(List<String> indices) {
+		this.indices = indices;
 	}
 
-	public Long getTotalDebt() {
-		return totalDebt;
+	public List<AnalystOpinion> getOpinions() {
+		return opinions;
 	}
 
-	public void setTotalDebt(Long totalDebt) {
-		this.totalDebt = totalDebt;
+	public void setOpinions(List<AnalystOpinion> opinions) {
+		this.opinions = opinions;
 	}
 
-	public Long getLeveredFreeCashFlow() {
-		return leveredFreeCashFlow;
+	public List<QuartlyEps> getEpsHistory() {
+		return epsHistory;
 	}
 
-	public void setLeveredFreeCashFlow(Long leveredFreeCashFlow) {
-		this.leveredFreeCashFlow = leveredFreeCashFlow;
+	public void setEpsHistory(List<QuartlyEps> epsHistory) {
+		this.epsHistory = epsHistory;
 	}
 
 }

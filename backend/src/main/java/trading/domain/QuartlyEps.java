@@ -23,6 +23,6 @@ public class QuartlyEps implements Comparable<QuartlyEps> {
 	}
 
 	public int compareTo(QuartlyEps arg0) {
-		return this.qtr.compareTo(arg0.qtr);
+		return arg0.qtr.compareTo(this.qtr);
 	}
 }

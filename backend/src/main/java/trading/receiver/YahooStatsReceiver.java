@@ -8,13 +8,11 @@ import org.jsoup.select.Elements;
 
 import trading.domain.Stock;
 import trading.domain.StockType;
+import trading.util.Constants;
 import trading.util.PropertyManager;
 
 public class YahooStatsReceiver {
 	private static Logger logger = Logger.getLogger(YahooStatsReceiver.class);
-
-	private static final long ONE_BILLION = 1000000000;
-	private static final long ONE_MILLION = 1000000;
 
 	private static void fetchSnapshot(Document doc, Stock stock) {
 		Element tr = doc.select("td:containsOwn(EBITDA (ttm))").get(1).parent(); //2nd one
@@ -23,10 +21,10 @@ public class YahooStatsReceiver {
 		long s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_BILLION);
+					value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_MILLION);
+					value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setEbitda(s);
 
@@ -36,10 +34,10 @@ public class YahooStatsReceiver {
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_BILLION);
+					value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_MILLION);
+					value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setTotalDebt(s);
 		
@@ -49,10 +47,10 @@ public class YahooStatsReceiver {
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_BILLION);
+					value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_MILLION);
+					value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setOperationCashFlow(s);		
 		
@@ -62,10 +60,10 @@ public class YahooStatsReceiver {
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_BILLION);
+					value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
 			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * ONE_MILLION);
+					value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setLeveredFreeCashFlow(s);		
 	}
@@ -83,8 +81,8 @@ public class YahooStatsReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.setStockType(StockType.STOCK);
-		stock.setExchange("[NYSE]");
+		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setExchange("[NYSE]");
 		fetch(stock);
 		System.out.println(stock);
 	}

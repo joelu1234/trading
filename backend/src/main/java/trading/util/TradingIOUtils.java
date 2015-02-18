@@ -9,6 +9,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.io.IOUtils;
 
 public class TradingIOUtils {
+	private TradingIOUtils(){}
 	public static byte[] getBytesFromURL(String url) throws Exception {
 		InputStream in = new URL(url).openStream();
 		try {
