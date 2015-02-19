@@ -5,11 +5,40 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.net.ssl.HttpsURLConnection;
+
 import org.apache.commons.io.IOUtils;
 
-public class TradingIOUtils {
-	private TradingIOUtils(){}
+public class Utils {
+	private Utils(){}
+	
+	public static Date getNextMonthlyOEDate()
+	{
+		Calendar cal=Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+		cal.set(Calendar.DAY_OF_WEEK_IN_MONTH,3);
+		cal.set(Calendar.HOUR_OF_DAY,0);
+		cal.set(Calendar.MINUTE,0);
+		cal.set(Calendar.SECOND,0);
+		cal.set(Calendar.MILLISECOND,0);
+
+		if(System.currentTimeMillis()>=cal.getTimeInMillis())
+		{
+			cal.add(Calendar.MONTH, 1);
+			cal.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+			cal.set(Calendar.DAY_OF_WEEK_IN_MONTH, 3);
+		}
+
+		if(PropertyManager.getInstance().isHoliday(cal.getTime()))
+		{
+			cal.add(Calendar.DATE, -1);
+		}		
+        return cal.getTime();
+	}
+	
 	public static byte[] getBytesFromURL(String url) throws Exception {
 		InputStream in = new URL(url).openStream();
 		try {

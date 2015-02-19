@@ -28,7 +28,9 @@ final public class PropertyManager {
 	final public static String REUTERS_STATS = "trading.reciever.reuters.stats";
 	final public static String YAHOO_STATS = "trading.reciever.yahoo.stats";
 	final public static String YAHOO_AE = "trading.reciever.yahoo.ae";
-
+	final public static String YAHOO_OPTION = "trading.receiver.yahoo.option";
+    final public static String GOOGLE_QUOTE = "trading.receiver.google.quote";
+	
 	final public static String MAIL_SMTPS_AUTH = "mail.smtps.auth";
 	final public static String MAIL_SMTPS_HOST = "mail.smtps.host";
 	final public static String MAIL_SMTPS_PORT = "mail.smtps.port";
@@ -40,9 +42,11 @@ final public class PropertyManager {
 	final public static String FILE_CONF = "config/conf.properties";
 	final public static String FILE_HOLIDAY = "config/holidays.properties";
 	final public static String DIR_PORTFOLIO = "portfolio";
-	final public static String FILE_STATS = "data/stats.json";
-	final public static String FILE_QUOTES = "data/quotes.json";
-	final public static String FILE_OPTIONS = "data/options.json";
+	
+	final public static String DIR_DATA = "data";
+	final public static String FILE_STATS = "stats.json";
+	final public static String FILE_QUOTES = "quotes.json";
+	final public static String FILE_OPTIONS = "options.json";
 
 	private static PropertyManager propertyManager = null;
 
@@ -103,9 +107,11 @@ final public class PropertyManager {
 		hProps.load(loader.getResourceAsStream(FILE_HOLIDAY));
 		loadHolidays(hProps.stringPropertyNames());
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
-		statsFile = new File(loader.getResource(FILE_STATS).toURI());
-		quoteFile = new File(loader.getResource(FILE_QUOTES).toURI());
-		optionFile = new File(loader.getResource(FILE_OPTIONS).toURI());
+		
+		File dataDir = new File(loader.getResource(DIR_DATA).toURI());
+		statsFile = new File(dataDir, FILE_STATS);
+		quoteFile = new File(dataDir, FILE_QUOTES);
+		optionFile = new File(dataDir, FILE_OPTIONS);
 	}
 	
 	public String getProperty(String key) {

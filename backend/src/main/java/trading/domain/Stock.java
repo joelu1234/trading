@@ -50,7 +50,7 @@ public class Stock {
 	public void setQuotes(List<Quote> quotes) {
 		this.quotes = quotes;
 	}
-
+ 
 	private static ObjectMapper getObjectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
