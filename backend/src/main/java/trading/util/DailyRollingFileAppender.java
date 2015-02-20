@@ -49,7 +49,7 @@ public class DailyRollingFileAppender extends FileAppender {
 		if (dynamicFileName != null) {
 			this.fileSystemProperty = fileSystemProperty;
 			setFile(dynamicFileName);
-		} 
+		}
 	}
 
 	/**
@@ -97,10 +97,8 @@ public class DailyRollingFileAppender extends FileAppender {
 	 * designated by <code>filename</code>. The opened filename will become the
 	 * output destination for this appender.
 	 */
-	public DailyRollingFileAppender(Layout layout, String filename,
-			String datePattern) throws IOException {
-		throw new IOException(
-				"DailyRollingFileAppender constructor Not implemented");
+	public DailyRollingFileAppender(Layout layout, String filename, String datePattern) throws IOException {
+		throw new IOException("DailyRollingFileAppender constructor Not implemented");
 	}
 
 	private String buildFileName(String date, String fileName) {
@@ -119,20 +117,17 @@ public class DailyRollingFileAppender extends FileAppender {
 			int type = computeCheckPeriod();
 			printPeriodicity(type);
 			rc.setType(type);
-			scheduledFilename = buildFileName(sdf.format(new Date(time)),
-					fileName);
+			scheduledFilename = buildFileName(sdf.format(new Date(time)), fileName);
 			fileName = scheduledFilename;
 		} else {
-			LogLog.error("Either File or DatePattern options are not set for appender ["
-					+ name + "].");
+			LogLog.error("Either File or DatePattern options are not set for appender [" + name + "].");
 		}
 
 		try {
 			this.setFile(fileName, true, false, bufferSize);
 			// super.initFileAppender(layout, fileName, true);
 		} catch (IOException e) {
-			LogLog.error("DailyRollingFileAppender cant log to file:"
-					+ fileName + " err:" + e.getMessage());
+			LogLog.error("DailyRollingFileAppender cant log to file:" + fileName + " err:" + e.getMessage());
 		}
 	}
 
@@ -159,23 +154,19 @@ public class DailyRollingFileAppender extends FileAppender {
 			LogLog.debug("Appender [" + name + "] to be rolled every minute.");
 			break;
 		case TOP_OF_HOUR:
-			LogLog.debug("Appender [" + name
-					+ "] to be rolled on top of every hour.");
+			LogLog.debug("Appender [" + name + "] to be rolled on top of every hour.");
 			break;
 		case HALF_DAY:
-			LogLog.debug("Appender [" + name
-					+ "] to be rolled at midday and midnight.");
+			LogLog.debug("Appender [" + name + "] to be rolled at midday and midnight.");
 			break;
 		case TOP_OF_DAY:
 			LogLog.debug("Appender [" + name + "] to be rolled at midnight.");
 			break;
 		case TOP_OF_WEEK:
-			LogLog.debug("Appender [" + name
-					+ "] to be rolled at start of week.");
+			LogLog.debug("Appender [" + name + "] to be rolled at start of week.");
 			break;
 		case TOP_OF_MONTH:
-			LogLog.debug("Appender [" + name
-					+ "] to be rolled at start of every month.");
+			LogLog.debug("Appender [" + name + "] to be rolled at start of every month.");
 			break;
 		default:
 			LogLog.warn("Unknown periodicity for appender [" + name + "].");
@@ -192,14 +183,12 @@ public class DailyRollingFileAppender extends FileAppender {
 	// GMT (the epoch).
 
 	int computeCheckPeriod() {
-		RollingCalendar rollingCalendar = new RollingCalendar(gmtTimeZone,
-				Locale.getDefault());
+		RollingCalendar rollingCalendar = new RollingCalendar(gmtTimeZone, Locale.getDefault());
 		// set sate to 1970-01-01 00:00:00 GMT
 		Date epoch = new Date(0);
 		if (datePattern != null) {
 			for (int i = TOP_OF_MINUTE; i <= TOP_OF_MONTH; i++) {
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-						datePattern);
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
 				simpleDateFormat.setTimeZone(gmtTimeZone); // do all date
 															// formatting in GMT
 				String r0 = simpleDateFormat.format(epoch);
@@ -247,8 +236,7 @@ public class DailyRollingFileAppender extends FileAppender {
 			File[] logFiles = f.listFiles();
 			for (File logFile : logFiles) {
 				if (logFile.getName().endsWith(rootFileNameFile)) {
-					long age = System.currentTimeMillis()
-							- logFile.lastModified();
+					long age = System.currentTimeMillis() - logFile.lastModified();
 					age = (long) (age / (1000.0 * 60 * 60 * 24));
 					if (age > maxDaysOld) {
 						logFile.delete();
@@ -264,8 +252,7 @@ public class DailyRollingFileAppender extends FileAppender {
 			this.setFile(datedFilename, true, this.bufferedIO, this.bufferSize);
 		} catch (IOException e) {
 			// MAL use datedFilename
-			errorHandler.error("setFile(" + datedFilename
-					+ ", true) call failed.");
+			errorHandler.error("setFile(" + datedFilename + ", true) call failed.");
 		}
 		scheduledFilename = datedFilename;
 	}

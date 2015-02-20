@@ -50,7 +50,7 @@ public class Stock {
 	public void setQuotes(List<Quote> quotes) {
 		this.quotes = quotes;
 	}
- 
+
 	private static ObjectMapper getObjectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
@@ -67,13 +67,11 @@ public class Stock {
 		}
 	}
 
-	public void toJSONFile(File file) throws JsonGenerationException,
-			JsonMappingException, IOException {
+	public void toJSONFile(File file) throws JsonGenerationException, JsonMappingException, IOException {
 		getObjectMapper().writeValue(file, this);
 	}
 
-	public static Stock fromJSONFile(File file) throws JsonParseException,
-			JsonMappingException, IOException {
+	public static Stock fromJSONFile(File file) throws JsonParseException, JsonMappingException, IOException {
 		return getObjectMapper().readValue(file, Stock.class);
 	}
 

@@ -20,14 +20,12 @@ import trading.util.PropertyManager;
 
 public class FileDaoImpl {
 
-	public Map<String, Stock> loadStocks() throws Exception{
+	public Map<String, Stock> loadStocks() throws Exception {
 		Map<String, Stock> stocks = new HashMap<String, Stock>();
 		File file = PropertyManager.getInstance().getStatsFile();
 		if (file.exists()) {
-			Map<String, FundamentalData> map = getObjectMapper().readValue(
-					file,
-					new TypeReference<HashMap<String, FundamentalData>>() {
-					});
+			Map<String, FundamentalData> map = getObjectMapper().readValue(file, new TypeReference<HashMap<String, FundamentalData>>() {
+			});
 			for (Map.Entry<String, FundamentalData> entry : map.entrySet()) {
 				String ticker = entry.getKey();
 				Stock stock = new Stock();
@@ -38,9 +36,8 @@ public class FileDaoImpl {
 		}
 		file = PropertyManager.getInstance().getQuoteFile();
 		if (file.exists()) {
-			Map<String, List<Quote>> map = getObjectMapper().readValue(file,
-					new TypeReference<HashMap<String, List<Quote>>>() {
-					});
+			Map<String, List<Quote>> map = getObjectMapper().readValue(file, new TypeReference<HashMap<String, List<Quote>>>() {
+			});
 			for (Map.Entry<String, List<Quote>> entry : map.entrySet()) {
 				String ticker = entry.getKey();
 				Stock stock = stocks.get(ticker);
@@ -55,10 +52,8 @@ public class FileDaoImpl {
 		}
 		file = PropertyManager.getInstance().getOptionFile();
 		if (file.exists()) {
-			Map<String, List<OptionData>> map = getObjectMapper().readValue(
-					file,
-					new TypeReference<HashMap<String, List<OptionData>>>() {
-					});
+			Map<String, List<OptionData>> map = getObjectMapper().readValue(file, new TypeReference<HashMap<String, List<OptionData>>>() {
+			});
 			for (Map.Entry<String, List<OptionData>> entry : map.entrySet()) {
 				String ticker = entry.getKey();
 				Stock stock = stocks.get(ticker);
@@ -79,8 +74,7 @@ public class FileDaoImpl {
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getFundamentalData());
 		}
-		getObjectMapper().writeValue(
-				PropertyManager.getInstance().getStatsFile(), map);
+		getObjectMapper().writeValue(PropertyManager.getInstance().getStatsFile(), map);
 	}
 
 	public void saveQuotes(Collection<Stock> stocks) throws Exception {
@@ -88,8 +82,7 @@ public class FileDaoImpl {
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getQuotes());
 		}
-		getObjectMapper().writeValue(
-				PropertyManager.getInstance().getQuoteFile(), map);
+		getObjectMapper().writeValue(PropertyManager.getInstance().getQuoteFile(), map);
 	}
 
 	public void saveOptions(Collection<Stock> stocks) throws Exception {
@@ -97,8 +90,7 @@ public class FileDaoImpl {
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getOptions());
 		}
-		getObjectMapper().writeValue(
-				PropertyManager.getInstance().getOptionFile(), map);
+		getObjectMapper().writeValue(PropertyManager.getInstance().getOptionFile(), map);
 	}
 
 	private static ObjectMapper getObjectMapper() {

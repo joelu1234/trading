@@ -63,12 +63,12 @@ public class OptionData implements Comparable<OptionData> {
 	public static String header() {
 		return "Contract,PutCall,Strike,Last,Volume,OI,IV\n";
 	}
-	
+
 	@Override
 	public String toString() {
 		NumberFormat formatter = new DecimalFormat("#####.##");
 		StringBuilder sb = new StringBuilder();
-		sb.append(callType?"call":"put");
+		sb.append(callType ? "call" : "put");
 		sb.append(",");
 		sb.append(formatter.format(strike));
 		sb.append(",");
@@ -95,11 +95,8 @@ public class OptionData implements Comparable<OptionData> {
 		optionData.setIv(Float.parseFloat(strs[pos++]));
 		return optionData;
 	}
-	
 
 	public int compareTo(OptionData o) {
-		return new CompareToBuilder()
-		.append(this.callType,o.callType)
-		.append(this.strike,o.strike).toComparison();
+		return new CompareToBuilder().append(this.callType, o.callType).append(this.strike, o.strike).toComparison();
 	}
 }

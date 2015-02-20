@@ -71,8 +71,7 @@ final public class PropertyManager {
 		}
 	}
 
-	private void loadPortfolio(URL dirUri) throws URISyntaxException,
-			FileNotFoundException, IOException {
+	private void loadPortfolio(URL dirUri) throws URISyntaxException, FileNotFoundException, IOException {
 		File dir = new File(dirUri.toURI());
 		for (String name : dir.list()) {
 			String index = name.split("\\.")[0].toUpperCase();
@@ -113,7 +112,6 @@ final public class PropertyManager {
 		if (!dataDir.exists()) {
 			dataDir.mkdir();
 		}
-		// File dataDir = new File(loader.getResource(DIR_DATA).toURI());
 		statsFile = new File(dataDir, FILE_STATS);
 		quoteFile = new File(dataDir, FILE_QUOTES);
 		optionFile = new File(dataDir, FILE_OPTIONS);

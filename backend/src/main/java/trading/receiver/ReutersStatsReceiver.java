@@ -15,8 +15,7 @@ public class ReutersStatsReceiver {
 	private static Logger logger = Logger.getLogger(ReutersStatsReceiver.class);
 
 	private static void fetchSnapshot(Document doc, Stock stock) {
-		Element tr = doc.select("td:contains(P/E High - Last 5 Yrs.)").first()
-				.parent();
+		Element tr = doc.select("td:contains(P/E High - Last 5 Yrs.)").first().parent();
 		Elements tds = tr.getElementsByTag("td");
 		String value = tds.get(1).text();
 		if (!"--".equals(value)) {
@@ -29,19 +28,17 @@ public class ReutersStatsReceiver {
 		if (!"--".equals(value)) {
 			stock.getFundamentalData().setPeLow5yrs(Float.parseFloat(value));
 		}
-		
+
 		tr = doc.select("td:contains(Dividend 5 Year Growth Rate)").first().parent();
 		tds = tr.getElementsByTag("td");
 		value = tds.get(1).text();
 		if (!"--".equals(value)) {
-			stock.getFundamentalData().setDivGrowthRate5Yr(Float.parseFloat(value)*Constants.ONE_PERCENT);
+			stock.getFundamentalData().setDivGrowthRate5Yr(Float.parseFloat(value) * Constants.ONE_PERCENT);
 		}
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getInstance().getProperty(
-				PropertyManager.REUTERS_STATS)
-				+ stock.getTicker();
+		String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + stock.getTicker();
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
 			url = url + ".O";
 		}

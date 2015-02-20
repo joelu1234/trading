@@ -55,10 +55,10 @@ public class FundamentalData {
 	private Float high52weeks;
 	private Float low52weeks;
 
-	private List<String> indices=new ArrayList<String>();
-	private List<AnalystOpinion> opinions = new ArrayList<AnalystOpinion>(); 
-	private List<QuartlyEps> epsHistory = new ArrayList<QuartlyEps>(); 
-	
+	private List<String> indices = new ArrayList<String>();
+	private List<AnalystOpinion> opinions = new ArrayList<AnalystOpinion>();
+	private List<QuartlyEps> epsHistory = new ArrayList<QuartlyEps>();
+
 	public String getName() {
 		return name;
 	}

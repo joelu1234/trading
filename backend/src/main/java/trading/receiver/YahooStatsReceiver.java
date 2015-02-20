@@ -15,63 +15,54 @@ public class YahooStatsReceiver {
 	private static Logger logger = Logger.getLogger(YahooStatsReceiver.class);
 
 	private static void fetchSnapshot(Document doc, Stock stock) {
-		Element tr = doc.select("td:containsOwn(EBITDA (ttm))").get(1).parent(); //2nd one
-	    Elements tds = tr.getElementsByTag("td");
+		Element tr = doc.select("td:containsOwn(EBITDA (ttm))").get(1).parent(); // 2nd
+																					// one
+		Elements tds = tr.getElementsByTag("td");
 		String value = tds.get(1).text();
 		long s = 0;
 		if (value.endsWith("B")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_BILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_MILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setEbitda(s);
 
-		tr = doc.select("td:containsOwn(Total Debt (mrq))").first().parent(); 
+		tr = doc.select("td:containsOwn(Total Debt (mrq))").first().parent();
 		tds = tr.getElementsByTag("td");
 		value = tds.get(1).text();
 		s = 0;
 		if (value.endsWith("B")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_BILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_MILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_MILLION);
 		}
 		stock.getFundamentalData().setTotalDebt(s);
-		
-		tr = doc.select("td:containsOwn(Operating Cash Flow)").first().parent(); 
+
+		tr = doc.select("td:containsOwn(Operating Cash Flow)").first().parent();
 		tds = tr.getElementsByTag("td");
 		value = tds.get(1).text();
 		s = 0;
 		if (value.endsWith("B")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_BILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_MILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_MILLION);
 		}
-		stock.getFundamentalData().setOperationCashFlow(s);		
-		
-		tr = doc.select("td:containsOwn(Levered Free Cash Flow)").first().parent(); 
+		stock.getFundamentalData().setOperationCashFlow(s);
+
+		tr = doc.select("td:containsOwn(Levered Free Cash Flow)").first().parent();
 		tds = tr.getElementsByTag("td");
 		value = tds.get(1).text();
 		s = 0;
 		if (value.endsWith("B")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_BILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
 		} else if (value.endsWith("M")) {
-			s = (long) (Double.parseDouble(value.substring(0,
-					value.length() - 1)) * Constants.ONE_MILLION);
+			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_MILLION);
 		}
-		stock.getFundamentalData().setLeveredFreeCashFlow(s);		
+		stock.getFundamentalData().setLeveredFreeCashFlow(s);
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getInstance().getProperty(
-				PropertyManager.YAHOO_STATS)
-				+ stock.getTicker();
+		String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_STATS) + stock.getTicker();
 		logger.debug("url=" + url);
 		Document doc = Jsoup.connect(url).get();
 		fetchSnapshot(doc, stock);

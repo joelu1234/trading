@@ -13,32 +13,30 @@ import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.io.IOUtils;
 
 public class Utils {
-	private Utils(){}
-	
-	public static Date getNextMonthlyOEDate()
-	{
-		Calendar cal=Calendar.getInstance();
-		cal.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
-		cal.set(Calendar.DAY_OF_WEEK_IN_MONTH,3);
-		cal.set(Calendar.HOUR_OF_DAY,0);
-		cal.set(Calendar.MINUTE,0);
-		cal.set(Calendar.SECOND,0);
-		cal.set(Calendar.MILLISECOND,0);
+	private Utils() {
+	}
 
-		if(System.currentTimeMillis()>=cal.getTimeInMillis())
-		{
+	public static Date getNextMonthlyOEDate() {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+		cal.set(Calendar.DAY_OF_WEEK_IN_MONTH, 3);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		if (System.currentTimeMillis() >= cal.getTimeInMillis()) {
 			cal.add(Calendar.MONTH, 1);
-			cal.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+			cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
 			cal.set(Calendar.DAY_OF_WEEK_IN_MONTH, 3);
 		}
 
-		if(PropertyManager.getInstance().isHoliday(cal.getTime()))
-		{
+		if (PropertyManager.getInstance().isHoliday(cal.getTime())) {
 			cal.add(Calendar.DATE, -1);
-		}		
-        return cal.getTime();
+		}
+		return cal.getTime();
 	}
-	
+
 	public static byte[] getBytesFromURL(String url) throws Exception {
 		InputStream in = new URL(url).openStream();
 		try {
@@ -58,8 +56,7 @@ public class Utils {
 	}
 
 	public static byte[] getBytesFromHttpsURL(String url) throws Exception {
-		HttpsURLConnection conn = (HttpsURLConnection) (new URL(url))
-				.openConnection();
+		HttpsURLConnection conn = (HttpsURLConnection) (new URL(url)).openConnection();
 		InputStream in = conn.getInputStream();
 		try {
 			return IOUtils.toByteArray(in);
@@ -69,8 +66,7 @@ public class Utils {
 	}
 
 	public static String getStringFromHttpsURL(String url) throws Exception {
-		HttpsURLConnection conn = (HttpsURLConnection) (new URL(url))
-				.openConnection();
+		HttpsURLConnection conn = (HttpsURLConnection) (new URL(url)).openConnection();
 		InputStream in = conn.getInputStream();
 		try {
 			return IOUtils.toString(in, "UTF-8");
@@ -106,4 +102,5 @@ public class Utils {
 		}
 
 	}
+
 }

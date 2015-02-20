@@ -41,12 +41,10 @@ public class GoogleQuoteReceiver {
 		return Math.abs(delta) > SPLIT_THRESHOLD;
 	}
 
-	private static boolean fetch0(Stock stock, Date startDate, Date endDate)
-			throws Exception {
+	private static boolean fetch0(Stock stock, Date startDate, Date endDate) throws Exception {
 		List<Quote> list = stock.getQuotes();
 		String url = getUrl(stock.getTicker(), startDate, endDate);
-		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(
-				url).openStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
 
 		CSVReader reader = null;
 		try {
@@ -56,9 +54,7 @@ public class GoogleQuoteReceiver {
 				logger.info("no quote for" + stock.getTicker());
 				return true;
 			}
-			if (list.size() > 0
-					&& hasSplit(list.get(list.size() - 1),
-							parseQuote(rowList.get(rowList.size() - 1)))) {
+			if (list.size() > 0 && hasSplit(list.get(list.size() - 1), parseQuote(rowList.get(rowList.size() - 1)))) {
 				list.clear();
 				return false;
 			}
@@ -81,8 +77,7 @@ public class GoogleQuoteReceiver {
 		if (list.size() == 0) {
 			startDate = DateUtils.addYears(endDate, -5);
 		} else {
-			startDate = DateUtils.addDays(list.get(list.size() - 1).getDate(),
-					1);
+			startDate = DateUtils.addDays(list.get(list.size() - 1).getDate(), 1);
 		}
 		if (startDate.after(endDate)) {
 			logger.info("Quote up to date for " + stock.getTicker());
@@ -97,8 +92,7 @@ public class GoogleQuoteReceiver {
 
 	// http://www.google.com/finance/historical?output=csv&q=AAPL&startdate=Feb+19%2C+2011&enddate=Feb+18%2C+2015
 	private static String getUrl(String ticker, Date startDate, Date endDate) {
-		StringBuilder sb = new StringBuilder(PropertyManager.getInstance()
-				.getProperty(PropertyManager.GOOGLE_QUOTE));
+		StringBuilder sb = new StringBuilder(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_QUOTE));
 		sb.append(ticker);
 		sb.append("&startdate=");
 		sb.append(new SimpleDateFormat(URL_DATE_FORMAT).format(startDate));
@@ -109,10 +103,10 @@ public class GoogleQuoteReceiver {
 	}
 
 	public static void main(String[] args) throws Exception {
-		
-		//Date date = Utils.getNextMonthlyOEDate(TimeZone.getTimeZone("GMT"));
-		//Date date = Utils.getNextMonthlyOEDate();
-		//System.out.println(date+" "+date.getTime());
+
+		// Date date = Utils.getNextMonthlyOEDate(TimeZone.getTimeZone("GMT"));
+		// Date date = Utils.getNextMonthlyOEDate();
+		// System.out.println(date+" "+date.getTime());
 		Stock stock = new Stock();
 		stock.setTicker("T");
 		fetch(stock);
