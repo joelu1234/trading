@@ -93,6 +93,6 @@ public class YahooOptionReceiver {
 		stock.getFundamentalData().setExchange("[NYSE]");
 		stock.getFundamentalData().setOptionable(true);
 		fetch(stock);
-		System.out.println(stock);
+		System.out.println(stock.getOptions());
 	}
 }

@@ -29,8 +29,8 @@ final public class PropertyManager {
 	final public static String YAHOO_STATS = "trading.reciever.yahoo.stats";
 	final public static String YAHOO_AE = "trading.reciever.yahoo.ae";
 	final public static String YAHOO_OPTION = "trading.receiver.yahoo.option";
-    final public static String GOOGLE_QUOTE = "trading.receiver.google.quote";
-	
+	final public static String GOOGLE_QUOTE = "trading.receiver.google.quote";
+
 	final public static String MAIL_SMTPS_AUTH = "mail.smtps.auth";
 	final public static String MAIL_SMTPS_HOST = "mail.smtps.host";
 	final public static String MAIL_SMTPS_PORT = "mail.smtps.port";
@@ -42,8 +42,9 @@ final public class PropertyManager {
 	final public static String FILE_CONF = "config/conf.properties";
 	final public static String FILE_HOLIDAY = "config/holidays.properties";
 	final public static String DIR_PORTFOLIO = "portfolio";
-	
-	final public static String DIR_DATA = "data";
+
+	final public static String CLASSPATH_ROOT = "./";
+	final public static String DIR_DATA = "stockdata";
 	final public static String FILE_STATS = "stats.json";
 	final public static String FILE_QUOTES = "quotes.json";
 	final public static String FILE_OPTIONS = "options.json";
@@ -63,7 +64,7 @@ final public class PropertyManager {
 	private PropertyManager() throws Exception {
 		loadRefernceData();
 	}
-	
+
 	private void loadHolidays(Set<String> set) throws ParseException {
 		for (String str : set) {
 			holidays.add(new SimpleDateFormat(Constants.DATE_FORMAT).parse(str));
@@ -99,7 +100,6 @@ final public class PropertyManager {
 		return propertyManager;
 	}
 
-	
 	public void loadRefernceData() throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		props.load(loader.getResourceAsStream(FILE_CONF));
@@ -107,13 +107,18 @@ final public class PropertyManager {
 		hProps.load(loader.getResourceAsStream(FILE_HOLIDAY));
 		loadHolidays(hProps.stringPropertyNames());
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
-		
-		File dataDir = new File(loader.getResource(DIR_DATA).toURI());
+
+		File rootDir = new File(loader.getResource(CLASSPATH_ROOT).toURI());
+		File dataDir = new File(rootDir, DIR_DATA);
+		if (!dataDir.exists()) {
+			dataDir.mkdir();
+		}
+		// File dataDir = new File(loader.getResource(DIR_DATA).toURI());
 		statsFile = new File(dataDir, FILE_STATS);
 		quoteFile = new File(dataDir, FILE_QUOTES);
 		optionFile = new File(dataDir, FILE_OPTIONS);
 	}
-	
+
 	public String getProperty(String key) {
 		return props.getProperty(key, "");
 	}

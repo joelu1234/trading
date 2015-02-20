@@ -28,6 +28,7 @@ log
 bin-debug
 bin
 logs
+stockdata
 
 # Backup files
 *~
