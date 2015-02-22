@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Quote implements Comparable<Quote> {
 	public static final String DATE_FORMAT = "yyyyMMdd";
@@ -13,6 +15,12 @@ public class Quote implements Comparable<Quote> {
 	private float low;
 	private float high;
 	private long volume;
+
+	private Map<Integer, Float> simpleMaMap = new HashMap<Integer, Float>();
+	private Float rsi5;
+	private Float percentK;
+	private Float lowerBB20_2;
+	private Float upperBB20_2;
 
 	public Date getDate() {
 		return date;
@@ -62,8 +70,44 @@ public class Quote implements Comparable<Quote> {
 		this.volume = volume;
 	}
 
-	public static String header() {
-		return "Date,Open,High,Low,Close,Volume\n";
+	public Float getSimpleMA(int days) {
+		return simpleMaMap.get(days);
+	}
+
+	public void setSimpleMA(int days, Float ma) {
+		simpleMaMap.put(days, ma);
+	}
+
+	public Float getRsi5() {
+		return rsi5;
+	}
+
+	public void setRsi5(Float rsi5) {
+		this.rsi5 = rsi5;
+	}
+
+	public Float getPercentK() {
+		return percentK;
+	}
+
+	public void setPercentK(Float percentK) {
+		this.percentK = percentK;
+	}
+
+	public Float getLowerBB20_2() {
+		return lowerBB20_2;
+	}
+
+	public void setLowerBB20_2(Float lowerBB20_2) {
+		this.lowerBB20_2 = lowerBB20_2;
+	}
+
+	public Float getUpperBB20_2() {
+		return upperBB20_2;
+	}
+
+	public void setUpperBB20_2(Float upperBB20_2) {
+		this.upperBB20_2 = upperBB20_2;
 	}
 
 	@Override
@@ -107,7 +151,6 @@ public class Quote implements Comparable<Quote> {
 		q.setClose(1.12f);
 		q.setVolume(100);
 
-		System.out.println(Quote.header());
 		String str = q.toString();
 		System.out.println(str);
 
