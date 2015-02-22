@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Quote implements Comparable<Quote> {
 	public static final String DATE_FORMAT = "yyyyMMdd";
 	private Date date;
@@ -17,7 +19,8 @@ public class Quote implements Comparable<Quote> {
 	private long volume;
 
 	private Map<Integer, Float> simpleMaMap = new HashMap<Integer, Float>();
-	private Float rsi5;
+	private Float rsi5ns;
+	private Float rsi5ps;
 	private Float percentK;
 	private Float lowerBB20_2;
 	private Float upperBB20_2;
@@ -70,20 +73,38 @@ public class Quote implements Comparable<Quote> {
 		this.volume = volume;
 	}
 
+	public Map<Integer, Float> getSimpleMaMap() {
+		return simpleMaMap;
+	}
+
+	public void setSimpleMaMap(Map<Integer, Float> simpleMaMap) {
+		this.simpleMaMap = simpleMaMap;
+	}
+
+	@JsonIgnore
 	public Float getSimpleMA(int days) {
 		return simpleMaMap.get(days);
 	}
 
+	@JsonIgnore
 	public void setSimpleMA(int days, Float ma) {
 		simpleMaMap.put(days, ma);
 	}
 
-	public Float getRsi5() {
-		return rsi5;
+	public Float getRsi5ns() {
+		return rsi5ns;
 	}
 
-	public void setRsi5(Float rsi5) {
-		this.rsi5 = rsi5;
+	public void setRsi5ns(Float rsi5ns) {
+		this.rsi5ns = rsi5ns;
+	}
+
+	public Float getRsi5ps() {
+		return rsi5ps;
+	}
+
+	public void setRsi5ps(Float rsi5ps) {
+		this.rsi5ps = rsi5ps;
 	}
 
 	public Float getPercentK() {
@@ -108,6 +129,14 @@ public class Quote implements Comparable<Quote> {
 
 	public void setUpperBB20_2(Float upperBB20_2) {
 		this.upperBB20_2 = upperBB20_2;
+	}
+
+	@JsonIgnore
+	public Float getRsi5() {
+		if (rsi5ns != null)
+			return (100 * rsi5ps / (rsi5ns + rsi5ps));
+		else
+			return null;
 	}
 
 	@Override

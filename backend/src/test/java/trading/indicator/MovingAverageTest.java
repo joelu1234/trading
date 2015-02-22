@@ -1,6 +1,7 @@
 package trading.indicator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -54,5 +55,7 @@ public class MovingAverageTest {
 		assertEquals(stock.getQuotes().get(9).getSimpleMA(10), new Float(5.5f)); // 1+2+..+10
 		assertEquals(stock.getQuotes().get(48).getSimpleMA(10), new Float(44.5f)); // 40+..+49
 		assertEquals(stock.getQuotes().get(49).getSimpleMA(10), new Float(45.5f)); // 41+..+50
+		
+		assertTrue(stock.toString() != null);
 	}
 }

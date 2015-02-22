@@ -1,25 +1,24 @@
-package trading.indicator; 
+package trading.indicator;
 
 import trading.domain.Quote;
 
-public final class RSI  
-{  
+public final class RSI {
 	private static final int DAYS = 5;
-	
-    private RSI(){} 
 
-    public static void calcRSI(Quote[] quotes)
-    {
-    	calcRSI(quotes, DAYS);
-    }
-    
-    public static void calcRSI(Quote[] quotes, int days)  
-    { 
+	private RSI() {
+	}
+
+	public static void calcRSI(Quote[] quotes) {
+		calcRSI(quotes, DAYS);
+	}
+
+	public static void calcRSI(Quote[] quotes, int days) {
 		int end = quotes.length - 1;
 		int start = days;
+        int dLess1=days-1;
 		int pos = start;
 		for (int i = end; i >= start; i--) {
-			if (quotes[i].getRsi5() != null) {
+			if (quotes[i].getRsi5ns() != null) {
 				pos = i + 1;
 				break;
 			}
@@ -27,45 +26,43 @@ public final class RSI
 		if (pos > end) {
 			return;
 		}
+
+		float[] diff = new float[quotes.length];
+
+		for (int i = pos - dLess1; i <= end; i++) {
+			diff[i] = quotes[i].getClose() - quotes[i - 1].getClose();
+		}
+
+		Float ps = quotes[pos-1].getRsi5ps();
+		Float ns = quotes[pos-1].getRsi5ns();
 		
-        float[] diff=new float[quotes.length];
-        
-        for(int i=pos-days+1;i<=end;i++){
-        	diff[i]=quotes[i].getClose()-quotes[i-1].getClose();
-        }
-        
-        float ps=0;
-        float ns=0;
-        
-        for(int i=pos-days+1;i<=pos;i++)
-        {
-            if(diff[i]<0)
-            {
-                ns+=diff[i];
-            }
-            else if(diff[i]>0)
-            {
-                ps+=diff[i];                    
-            }
-        }
-        ps=ps/days;
-        ns=0-ns/days;
-        quotes[pos].setRsi5(100*ps/(ns+ps));
- 
-        
-        for(int i=pos+1;i<=end; i++)
-        {
-            if(diff[i]<0)
-            {
-                ns=(ns*(days-1)-diff[i])/days;
-                ps=(ps*(days-1))/days; 
-            }
-            else if(diff[i]>0)
-            {
-                ns=(ns*(days-1))/days;
-                ps=(ps*(days-1)+diff[i])/days;                    
-            }                
-            quotes[i].setRsi5((100*ps/(ns+ps)));
-        } 
-    } 
-} 
+		for (int i = pos; i <= end; i++) {
+			if(ps==null)
+			{
+				ps = 0.0f;
+				ns=0.0f;
+				for (int j =  i- dLess1; j <= i; j++) {
+					if (diff[j] < 0) {
+					ns += diff[j];
+					} else if (diff[j] > 0) {
+					ps += diff[j];
+					}
+				}
+				ps = ps / days;
+				ns = 0 - ns / days;
+			}
+			else
+			{
+				if (diff[i] < 0) {
+					ns = (ns * dLess1 - diff[i]) / days;
+					ps = (ps * dLess1) / days;
+				} else if (diff[i] > 0) {
+					ns = (ns * dLess1) / days;
+					ps = (ps * dLess1 + diff[i]) / days;
+				}
+			}
+			quotes[i].setRsi5ns(ns);
+			quotes[i].setRsi5ps(ps);
+		}
+	}
+}
