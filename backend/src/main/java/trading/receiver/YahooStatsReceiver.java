@@ -62,11 +62,14 @@ public class YahooStatsReceiver {
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_STATS) + stock.getTicker();
-		logger.debug("url=" + url);
-		Document doc = Jsoup.connect(url).get();
-		fetchSnapshot(doc, stock);
-
+		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+			String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_STATS) + stock.getTicker();
+			logger.debug("url=" + url);
+			Document doc = Jsoup.connect(url).get();
+			fetchSnapshot(doc, stock);
+		} else {
+			logger.debug(stock.getTicker() + " is not stock type");
+		}
 	}
 
 	public static void main(String[] args) throws Exception {

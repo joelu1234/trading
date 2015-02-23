@@ -25,9 +25,10 @@ final public class PropertyManager {
 	private static Logger logger = Logger.getLogger(PropertyManager.class);
 
 	final public static String FINVIZ_STATS = "trading.receiver.finviz.stats";
-	final public static String REUTERS_STATS = "trading.reciever.reuters.stats";
-	final public static String YAHOO_STATS = "trading.reciever.yahoo.stats";
-	final public static String YAHOO_AE = "trading.reciever.yahoo.ae";
+	final public static String REUTERS_STATS = "trading.receiver.reuters.stats";
+	final public static String YAHOO_STATS = "trading.receiver.yahoo.stats";
+	final public static String YAHOO_AE = "trading.receiver.yahoo.ae";
+	final public static String YAHOO_SUMMARY = "trading.receiver.yahoo.summary";
 	final public static String YAHOO_OPTION = "trading.receiver.yahoo.option";
 	final public static String GOOGLE_QUOTE = "trading.receiver.google.quote";
 

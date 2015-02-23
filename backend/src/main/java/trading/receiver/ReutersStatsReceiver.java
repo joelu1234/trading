@@ -38,14 +38,18 @@ public class ReutersStatsReceiver {
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + stock.getTicker();
-		if (stock.getFundamentalData().getExchange().contains("NASD")) {
-			url = url + ".O";
+		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+			String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + stock.getTicker();
+			if (stock.getFundamentalData().getExchange().contains("NASD")) {
+				url = url + ".O";
+			}
+			// NYSE/NASD
+			logger.debug("url=" + url);
+			Document doc = Jsoup.connect(url).get();
+			fetchSnapshot(doc, stock);
+		} else {
+			logger.debug(stock.getTicker() + " is not stock type");
 		}
-		// NYSE/NASD
-		logger.debug("url=" + url);
-		Document doc = Jsoup.connect(url).get();
-		fetchSnapshot(doc, stock);
 
 	}
 
