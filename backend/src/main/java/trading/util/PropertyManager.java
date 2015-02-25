@@ -49,6 +49,9 @@ final public class PropertyManager {
 	final public static String FILE_STATS = "stats.json";
 	final public static String FILE_QUOTES = "quotes.json";
 	final public static String FILE_OPTIONS = "options.json";
+	final public static String ZIP_FILE_STATS = FILE_STATS+".zip";
+	final public static String ZIP_FILE_QUOTES = FILE_QUOTES+".zip";
+	final public static String ZIP_FILE_OPTIONS = FILE_OPTIONS+".zip";
 
 	private static PropertyManager propertyManager = null;
 
@@ -113,9 +116,9 @@ final public class PropertyManager {
 		if (!dataDir.exists()) {
 			dataDir.mkdir();
 		}
-		statsFile = new File(dataDir, FILE_STATS);
-		quoteFile = new File(dataDir, FILE_QUOTES);
-		optionFile = new File(dataDir, FILE_OPTIONS);
+		statsFile = new File(dataDir, ZIP_FILE_STATS);
+		quoteFile = new File(dataDir, ZIP_FILE_QUOTES);
+		optionFile = new File(dataDir, ZIP_FILE_OPTIONS);
 	}
 
 	public String getProperty(String key) {
