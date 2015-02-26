@@ -21,7 +21,7 @@ import java.util.Set;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
-final public class PropertyManager {
+public class PropertyManager {
 	private static Logger logger = Logger.getLogger(PropertyManager.class);
 
 	final public static String FINVIZ_STATS = "trading.receiver.finviz.stats";
