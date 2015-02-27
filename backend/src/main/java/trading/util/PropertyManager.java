@@ -30,6 +30,7 @@ public class PropertyManager {
 	final public static String YAHOO_AE = "trading.receiver.yahoo.ae";
 	final public static String YAHOO_SUMMARY = "trading.receiver.yahoo.summary";
 	final public static String YAHOO_OPTION = "trading.receiver.yahoo.option";
+	final public static String GOOGLE_OPTION = "trading.receiver.google.option";
 	final public static String GOOGLE_QUOTE = "trading.receiver.google.quote";
 
 	final public static String MAIL_SMTPS_AUTH = "mail.smtps.auth";
@@ -80,7 +81,10 @@ public class PropertyManager {
 		for (String name : dir.list()) {
 			String index = name.split("\\.")[0].toUpperCase();
 			Properties stocks = new Properties();
-			stocks.load(new FileInputStream(new File(dir, name)));
+			File f = new File(dir, name);
+			if(f.isDirectory())
+				continue;
+			stocks.load(new FileInputStream(f));
 			for (String stock : stocks.stringPropertyNames()) {
 				List<String> indices = portfolio.get(stock);
 				if (indices == null) {
@@ -126,7 +130,7 @@ public class PropertyManager {
 	}
 
 	public boolean isHoliday(Date date) {
-		return holidays.contains(DateUtils.truncate(date, Calendar.DATE));
+		return holidays != null && holidays.contains(DateUtils.truncate(date, Calendar.DATE));
 	}
 
 	public Map<String, List<String>> getPortfolio() {
