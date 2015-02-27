@@ -1,4 +1,4 @@
-package com.theice.fileprocessor.web;
+package trading.service;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;

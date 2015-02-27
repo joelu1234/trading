@@ -43,15 +43,17 @@ public class PropertyManager {
 	final public static String FILE_CONF = "config/conf.properties";
 	final public static String FILE_HOLIDAY = "config/holidays.properties";
 	final public static String DIR_PORTFOLIO = "portfolio";
-
-	final public static String CLASSPATH_ROOT = "./";
 	final public static String DIR_DATA = "stockdata";
-	final public static String FILE_STATS = "stats.json";
-	final public static String FILE_QUOTES = "quotes.json";
-	final public static String FILE_OPTIONS = "options.json";
-	final public static String ZIP_FILE_STATS = FILE_STATS+".zip";
-	final public static String ZIP_FILE_QUOTES = FILE_QUOTES+".zip";
-	final public static String ZIP_FILE_OPTIONS = FILE_OPTIONS+".zip";
+	final public static String DIR_CONFIG = "config";
+	
+	final public static String FILE_STATS = "data.stats.file";
+	final public static String FILE_QUOTES = "data.quote.file";
+	final public static String FILE_OPTIONS = "data.option.file";
+	
+	final public static String JETTY_SERVER_NAME = "jetty.server.name";
+	final public static String JETTY_SERVER_PORT = "jetty.server.port";
+	final public static String JETTY_PATH_WAR = "jetty.path.war";
+	final public static String JETTY_WEB_XML = "jetty.web.xml";
 
 	private static PropertyManager propertyManager = null;
 
@@ -64,6 +66,9 @@ public class PropertyManager {
 	private File statsFile;
 	private File quoteFile;
 	private File optionFile;
+	
+	private File warPath;
+	private File webXmlPath; 
 
 	private PropertyManager() throws Exception {
 		loadRefernceData();
@@ -111,16 +116,23 @@ public class PropertyManager {
 		loadHolidays(hProps.stringPropertyNames());
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
 
-		File rootDir = new File(loader.getResource(CLASSPATH_ROOT).toURI());
-		File dataDir = new File(rootDir, DIR_DATA);
-		if (!dataDir.exists()) {
-			dataDir.mkdir();
-		}
-		statsFile = new File(dataDir, ZIP_FILE_STATS);
-		quoteFile = new File(dataDir, ZIP_FILE_QUOTES);
-		optionFile = new File(dataDir, ZIP_FILE_OPTIONS);
+		configDataFiles(new File(loader.getResource(DIR_DATA).toURI()));
+		configJettyPaths(new File(loader.getResource(DIR_CONFIG).toURI()));
 	}
 
+	private void configDataFiles(File rootDir)
+	{
+		statsFile = new File(rootDir, getProperty(FILE_STATS)+".zip");
+		quoteFile = new File(rootDir, getProperty(FILE_QUOTES)+".zip");
+		optionFile = new File(rootDir, getProperty(FILE_OPTIONS)+".zip");
+	}
+	
+	private void configJettyPaths(File rootDir)
+	{
+		warPath = new File(rootDir,  getProperty(JETTY_PATH_WAR));
+        webXmlPath = new File(warPath,getProperty(JETTY_WEB_XML));  
+	}
+	
 	public String getProperty(String key) {
 		return props.getProperty(key, "");
 	}
@@ -144,4 +156,21 @@ public class PropertyManager {
 	public File getOptionFile() {
 		return optionFile;
 	}
+
+	public File getWarPath() {
+		return warPath;
+	}
+
+	public void setWarPath(File warPath) {
+		this.warPath = warPath;
+	}
+
+	public File getWebXmlPath() {
+		return webXmlPath;
+	}
+
+	public void setWebXmlPath(File webXmlPath) {
+		this.webXmlPath = webXmlPath;
+	}
+	
 }

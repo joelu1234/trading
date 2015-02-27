@@ -31,6 +31,7 @@
 				<include>org.jsoup:jsoup:jar</include>
 				<include>org.mortbay.jetty:jetty:jar</include>
 				<include>org.mortbay.jetty:jetty-util:jar</include>
+				<include>org.slf4j:slf4j-api:jar</include>
 				<include>trading:backend:jar</include>
 			</includes>
 			<unpack>false</unpack>

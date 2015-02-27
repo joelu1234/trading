@@ -1,19 +1,16 @@
 package trading.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import trading.domain.OptionData;
@@ -26,9 +23,13 @@ public class FileDaoImplTest {
 	@Test
 	public void test() throws Exception {
 		PropertyManager mockPropertyManager = mock(PropertyManager.class);
-		when(mockPropertyManager.getStatsFile()).thenReturn(new File(PropertyManager.ZIP_FILE_STATS));
-		when(mockPropertyManager.getQuoteFile()).thenReturn(new File(PropertyManager.ZIP_FILE_QUOTES));
-		when(mockPropertyManager.getOptionFile()).thenReturn(new File(PropertyManager.ZIP_FILE_OPTIONS));
+		when(mockPropertyManager.getProperty(PropertyManager.FILE_STATS)).thenReturn("stats.json");
+		when(mockPropertyManager.getProperty(PropertyManager.FILE_QUOTES)).thenReturn("quotes.json");
+		when(mockPropertyManager.getProperty(PropertyManager.FILE_OPTIONS)).thenReturn("options.json");
+		
+		when(mockPropertyManager.getStatsFile()).thenReturn(new File("stats.json.zip"));
+		when(mockPropertyManager.getQuoteFile()).thenReturn(new File("quotes.json.zip"));
+		when(mockPropertyManager.getOptionFile()).thenReturn(new File("options.json.zip"));
 
 		FileDaoImpl dao = new FileDaoImpl();
 		dao.setPropertyManager(mockPropertyManager);
@@ -96,10 +97,17 @@ public class FileDaoImplTest {
 		dao.saveStats(stocks);
 		dao.saveQuotes(stocks);
 		dao.saveOptions(stocks);
-		
+
 		Map<String, Stock> map = dao.loadStocks();
 		assertEquals(map.size(), 2);
-		
+		Stock stock = map.get("T");
+		assertNotNull(stock);
+		assertEquals(stock.getFundamentalData().getName(), "ATT");
+		assertEquals(stock.getQuotes().get(0).getVolume(), 1000L);
+		assertTrue(stock.getOptions().get(0).isCallType());
 
+		mockPropertyManager.getStatsFile().delete();
+		mockPropertyManager.getQuoteFile().delete();
+		mockPropertyManager.getOptionFile().delete();
 	}
 }
