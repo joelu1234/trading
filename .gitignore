@@ -28,7 +28,7 @@ log
 bin-debug
 bin
 logs
-stockdata
+*.json.zip
 
 # Backup files
 *~
