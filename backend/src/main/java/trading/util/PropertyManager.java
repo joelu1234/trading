@@ -46,15 +46,18 @@ public class PropertyManager {
 	final public static String DIR_PORTFOLIO = "portfolio";
 	final public static String DIR_DATA = "stockdata";
 	final public static String DIR_CONFIG = "config";
-	
+
 	final public static String FILE_STATS = "data.stats.file";
 	final public static String FILE_QUOTES = "data.quote.file";
 	final public static String FILE_OPTIONS = "data.option.file";
-	
+
 	final public static String JETTY_SERVER_NAME = "jetty.server.name";
 	final public static String JETTY_SERVER_PORT = "jetty.server.port";
 	final public static String JETTY_PATH_WAR = "jetty.path.war";
 	final public static String JETTY_WEB_XML = "jetty.web.xml";
+
+	final public static String QUARTZ_WEEKDAY_SCHEDULE = "quartz.weekday.schedule";
+	final public static String QUARTZ_WEEKEND_SCHEDULE = "quartz.weekend.schedule";
 
 	private static PropertyManager propertyManager = null;
 
@@ -67,9 +70,9 @@ public class PropertyManager {
 	private File statsFile;
 	private File quoteFile;
 	private File optionFile;
-	
+
 	private File warPath;
-	private File webXmlPath; 
+	private File webXmlPath;
 
 	private PropertyManager() throws Exception {
 		loadRefernceData();
@@ -87,7 +90,7 @@ public class PropertyManager {
 			String index = name.split("\\.")[0].toUpperCase();
 			Properties stocks = new Properties();
 			File f = new File(dir, name);
-			if(f.isDirectory())
+			if (f.isDirectory())
 				continue;
 			stocks.load(new FileInputStream(f));
 			for (String stock : stocks.stringPropertyNames()) {
@@ -124,19 +127,17 @@ public class PropertyManager {
 		configJettyPaths(new File(loader.getResource(DIR_CONFIG).toURI()));
 	}
 
-	private void configDataFiles(File rootDir)
-	{
-		statsFile = new File(rootDir, getProperty(FILE_STATS)+".zip");
-		quoteFile = new File(rootDir, getProperty(FILE_QUOTES)+".zip");
-		optionFile = new File(rootDir, getProperty(FILE_OPTIONS)+".zip");
+	private void configDataFiles(File rootDir) {
+		statsFile = new File(rootDir, getProperty(FILE_STATS) + ".zip");
+		quoteFile = new File(rootDir, getProperty(FILE_QUOTES) + ".zip");
+		optionFile = new File(rootDir, getProperty(FILE_OPTIONS) + ".zip");
 	}
-	
-	private void configJettyPaths(File rootDir)
-	{
-		warPath = new File(rootDir,  getProperty(JETTY_PATH_WAR));
-        webXmlPath = new File(warPath,getProperty(JETTY_WEB_XML));  
+
+	private void configJettyPaths(File rootDir) {
+		warPath = new File(rootDir, getProperty(JETTY_PATH_WAR));
+		webXmlPath = new File(warPath, getProperty(JETTY_WEB_XML));
 	}
-	
+
 	public String getProperty(String key) {
 		return props.getProperty(key, "");
 	}
@@ -176,5 +177,5 @@ public class PropertyManager {
 	public void setWebXmlPath(File webXmlPath) {
 		this.webXmlPath = webXmlPath;
 	}
-	
+
 }
