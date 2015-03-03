@@ -8,9 +8,7 @@
 		<param name="Threshold" value="DEBUG" />
 		<param name="MaxDaysOld" value="5" />
 		<param name="DatePattern" value="yyyy-MM-dd'.'" />
-	    <param name="File" value="logs/trading.log" />
-	    <!-- this will overwrite file, passed in from java cmd -Dlog.file -->
-		<param name="FileSystemProperty" value="log.file"/>
+		<param name="File" value="${log.file}" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %-5p %t [%c] %m%n" />
 		</layout>
