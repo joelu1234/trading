@@ -18,7 +18,7 @@ public class YahooStatsReceiver {
 		Element tr = doc.select("td:containsOwn(EBITDA (ttm))").get(1).parent(); // 2nd
 																					// one
 		Elements tds = tr.getElementsByTag("td");
-		String value = tds.get(1).text();
+		String value = tds.get(1).text().replace(",", "");
 		long s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
@@ -29,7 +29,7 @@ public class YahooStatsReceiver {
 
 		tr = doc.select("td:containsOwn(Total Debt (mrq))").first().parent();
 		tds = tr.getElementsByTag("td");
-		value = tds.get(1).text();
+		value = tds.get(1).text().replace(",", "");
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
@@ -40,7 +40,7 @@ public class YahooStatsReceiver {
 
 		tr = doc.select("td:containsOwn(Operating Cash Flow)").first().parent();
 		tds = tr.getElementsByTag("td");
-		value = tds.get(1).text();
+		value = tds.get(1).text().replace(",", "");
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
@@ -51,7 +51,7 @@ public class YahooStatsReceiver {
 
 		tr = doc.select("td:containsOwn(Levered Free Cash Flow)").first().parent();
 		tds = tr.getElementsByTag("td");
-		value = tds.get(1).text();
+		value = tds.get(1).text().replace(",", "");
 		s = 0;
 		if (value.endsWith("B")) {
 			s = (long) (Double.parseDouble(value.substring(0, value.length() - 1)) * Constants.ONE_BILLION);
@@ -65,7 +65,17 @@ public class YahooStatsReceiver {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
 			String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_STATS) + stock.getTicker();
 			logger.debug("url=" + url);
-			Document doc = Jsoup.connect(url).get();
+			Document doc = null;
+			try
+			{
+				doc = Jsoup.connect(url).get();
+			}
+			catch(Exception ex)
+			{
+				logger.warn("http read error, retry", ex);
+				Thread.sleep(1000);
+				doc = Jsoup.connect(url).get();
+			}
 			fetchSnapshot(doc, stock);
 		} else {
 			logger.debug(stock.getTicker() + " is not stock type");

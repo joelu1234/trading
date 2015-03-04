@@ -37,15 +37,27 @@ public class YahooAeReceiver {
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+		if (stock.getFundamentalData().getStockType() == StockType.STOCK && "USA".equalsIgnoreCase(stock.getFundamentalData().getCountry())) {
 			String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_AE) + stock.getTicker();
 			logger.debug("url=" + url);
-			Document doc = Jsoup.connect(url).get();
-			fetchValues(doc, stock, ":containsOwn(Earnings Est)", 2);
-			fetchValues(doc, stock, ":containsOwn(Earnings History)", 4);
+			Document doc = null;
+			try {
+				doc = Jsoup.connect(url).get();
+			} catch (Exception ex) {
+				logger.warn("http read error, retry", ex);
+				Thread.sleep(1000);
+				doc = Jsoup.connect(url).get();
+			}
+			try {
+				fetchValues(doc, stock, ":containsOwn(Earnings Est)", 2);
+				fetchValues(doc, stock, ":containsOwn(Earnings History)", 4);
+			} catch (Exception ex) {
+				logger.warn("unable to fetch for "+stock.getTicker());
+				return;
+			}
 			Collections.sort(stock.getFundamentalData().getEpsHistory());
 		} else {
-			logger.debug(stock.getTicker() + " is not stock type");
+			logger.debug(stock.getTicker() + " is not stock type or not an american stock");
 		}
 	}
 

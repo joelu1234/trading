@@ -23,10 +23,15 @@ import trading.domain.Stock;
 import trading.util.Constants;
 import trading.util.PropertyManager;
 
-public class FileDaoImpl {
+public class FileDaoImpl implements TradingDataDao{
 
 	private PropertyManager propertyManager;
 
+	public FileDaoImpl()
+	{
+		propertyManager = PropertyManager.getInstance();
+	}
+	
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}

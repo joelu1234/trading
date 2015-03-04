@@ -9,6 +9,7 @@ public class FundamentalData {
 	private String exchange;
 	private String sector;
 	private String industry;
+	private String country;
 	private StockType stockType;
 	private boolean optionable;
 
@@ -89,6 +90,14 @@ public class FundamentalData {
 
 	public void setIndustry(String industry) {
 		this.industry = industry;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
 	}
 
 	public StockType getStockType() {

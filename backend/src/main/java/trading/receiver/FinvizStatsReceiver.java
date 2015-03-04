@@ -24,12 +24,17 @@ public class FinvizStatsReceiver {
 
 	private static void fetchSectorAndIndustry(Document doc, Stock stock) {
 		Element table = doc.select("table.fullview-title").first();
-		Elements links = table.select("a[href]");
+		//Elements links = table.select("a[href]");
+		Elements links = table.select("td");
 		stock.getFundamentalData().setName(links.get(1).text());
-		stock.getFundamentalData().setSector(links.get(2).text());
-		stock.getFundamentalData().setIndustry(links.get(3).text());
 		Element span = table.getElementsByTag("span").first();
-		stock.getFundamentalData().setExchange(span.text());
+		stock.getFundamentalData().setExchange(span.text());		
+		
+		Elements ll=links.get(2).select("a[href]");
+		
+		stock.getFundamentalData().setSector(ll.get(0).text());
+		stock.getFundamentalData().setIndustry(ll.get(1).text());
+		stock.getFundamentalData().setCountry(ll.get(2).text());
 
 	}
 
@@ -159,7 +164,17 @@ public class FinvizStatsReceiver {
 	public static void fetch(Stock stock) throws Exception {
 		String url = PropertyManager.getInstance().getProperty(PropertyManager.FINVIZ_STATS) + stock.getTicker();
 		logger.debug("url=" + url);
-		Document doc = Jsoup.connect(url).get();
+		Document doc = null;
+		try
+		{
+			doc = Jsoup.connect(url).get();
+		}
+		catch(Exception ex)
+		{
+			logger.warn("http read error, retry", ex);
+			Thread.sleep(1000);
+			doc = Jsoup.connect(url).get();
+		}
 		fetchSectorAndIndustry(doc, stock);
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
 			fetchSnapshot(doc, stock);
@@ -170,7 +185,7 @@ public class FinvizStatsReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setStockType(StockType.ETF);
 		fetch(stock);
 		System.out.println(stock);
 	}

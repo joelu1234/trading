@@ -94,6 +94,7 @@ public class PropertyManager {
 				continue;
 			stocks.load(new FileInputStream(f));
 			for (String stock : stocks.stringPropertyNames()) {
+				stock=stock.replaceAll("\\.", "-"); //BF.B change to BF-B
 				List<String> indices = portfolio.get(stock);
 				if (indices == null) {
 					indices = new ArrayList<String>();

@@ -17,21 +17,21 @@ public class ReutersStatsReceiver {
 	private static void fetchSnapshot(Document doc, Stock stock) {
 		Element tr = doc.select("td:contains(P/E High - Last 5 Yrs.)").first().parent();
 		Elements tds = tr.getElementsByTag("td");
-		String value = tds.get(1).text();
+		String value = tds.get(1).text().replace(",", "");
 		if (!"--".equals(value)) {
 			stock.getFundamentalData().setPeHight5yrs(Float.parseFloat(value));
 		}
 
 		tr = doc.select("td:contains(P/E Low - Last 5 Yrs.)").first().parent();
 		tds = tr.getElementsByTag("td");
-		value = tds.get(1).text();
+		value = tds.get(1).text().replace(",", "");
 		if (!"--".equals(value)) {
 			stock.getFundamentalData().setPeLow5yrs(Float.parseFloat(value));
 		}
 
 		tr = doc.select("td:contains(Dividend 5 Year Growth Rate)").first().parent();
 		tds = tr.getElementsByTag("td");
-		value = tds.get(1).text();
+		value = tds.get(1).text().replace(",", "");
 		if (!"--".equals(value)) {
 			stock.getFundamentalData().setDivGrowthRate5Yr(Float.parseFloat(value) * Constants.ONE_PERCENT);
 		}
@@ -39,7 +39,8 @@ public class ReutersStatsReceiver {
 
 	public static void fetch(Stock stock) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
-			String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + stock.getTicker();
+			String ticker = stock.getTicker().replace("-", ""); // BF-B changr to BFB
+			String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + ticker;
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
 				url = url + ".O";
 			}

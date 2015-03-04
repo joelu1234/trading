@@ -1,7 +1,9 @@
 package trading.service;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -26,11 +28,12 @@ public class TradingServer implements Runnable {
 	private static final Logger logger = Logger.getLogger(TradingServer.class);
 
 	public static final String URL_STATUS = "/status";
-
 	public static final String PATH_CONTEXT = "/";
 
 	private PropertyManager propertyManager;
-
+	private ReceiveService receiveService;
+	private Collection<Stock> stocks;
+	
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
@@ -39,12 +42,18 @@ public class TradingServer implements Runnable {
 		this.propertyManager = propertyManager;
 	}
 
-	private Map<String, Stock> stockMap = Collections.synchronizedMap(new HashMap<String, Stock>());
+	public ReceiveService getReceiveService() {
+		return receiveService;
+	}
 
-	private void loadStocks() {
+	public void setReceiveService(ReceiveService receiveService) {
+		this.receiveService = receiveService;
+	}
+
+	private void loadStocks() throws Exception {
 		logger.info("Load in stocks");
-		
-		
+		 Map<String, List<String>> portMap = this.propertyManager.getPortfolio();
+		 stocks = receiveService.loadStocks(portMap);
 	}
 
 	private void scheduleQuartzJobs() throws Exception {
@@ -114,14 +123,23 @@ public class TradingServer implements Runnable {
 	}
 
 	private void init() throws Exception {
-		this.setPropertyManager(PropertyManager.getInstance());
+		setPropertyManager(PropertyManager.getInstance());
+		setReceiveService(new ReceiveServiceImpl());
 		loadStocks();
 		scheduleQuartzJobs();
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		TradingServer server = new TradingServer();
-		server.init();
+		
+		try {
+			server.init();
+		} 
+		catch (Throwable th) 
+		{
+			logger.error("init error", th);
+			System.exit(1);
+		}
 		new Thread(server).start();
 	}
 }

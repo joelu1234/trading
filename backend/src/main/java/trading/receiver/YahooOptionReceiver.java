@@ -31,11 +31,11 @@ public class YahooOptionReceiver {
             	Elements tds=tr.getElementsByTag("td");
             	OptionData optionData = new OptionData();
             	optionData.setCallType(isCall);
-            	optionData.setStrike(Float.parseFloat(tds.get(0).text()));
-            	optionData.setLast(Float.parseFloat(tds.get(2).text()));
-            	optionData.setVolume(Long.parseLong(tds.get(7).text()));
-            	optionData.setOi(Long.parseLong(tds.get(8).text()));
-            	String str=tds.get(9).text();
+            	optionData.setStrike(Float.parseFloat(tds.get(0).text().replace(",", "")));
+            	optionData.setLast(Float.parseFloat(tds.get(2).text().replace(",", "")));
+            	optionData.setVolume(Long.parseLong(tds.get(7).text().replace(",", "")));
+            	optionData.setOi(Long.parseLong(tds.get(8).text().replace(",", "")));
+            	String str=tds.get(9).text().replace(",", "");
             	str=str.substring(0, str.length()-1);
             	optionData.setIv(Float.parseFloat(str)*Constants.ONE_PERCENT);
             	stock.getOptions().add(optionData);
@@ -49,7 +49,17 @@ public class YahooOptionReceiver {
 		{
 			String url = getUrl(stock.getTicker());
 			logger.debug("url=" + url);
-			Document doc = Jsoup.connect(url).get();
+			Document doc = null;
+			try
+			{
+				doc = Jsoup.connect(url).get();
+			}
+			catch(Exception ex)
+			{
+				logger.warn("http read error, retry", ex);
+				Thread.sleep(1000);
+				doc = Jsoup.connect(url).get();
+			}
 			fetchOptions(doc, stock);
 		}
 		else
