@@ -1,11 +1,16 @@
 package trading.indicator;
 
+import java.util.List;
+
 import trading.domain.Quote;
 
 public final class MovingAverage {
 	private MovingAverage() {
 	}
 
+	public static void calcSimpleMA(List<Quote> quotes, int days) {
+		calcSimpleMA(quotes.toArray(new Quote[0]), days);
+	}
 	public static void calcSimpleMA(Quote[] quotes, int days) {
 		int end = quotes.length - 1;
 		int start = days - 1;

@@ -11,8 +11,13 @@ import org.apache.log4j.Logger;
 
 import trading.dao.FileDaoImpl;
 import trading.dao.TradingDataDao;
+import trading.domain.Quote;
 import trading.domain.Stock;
 import trading.domain.StockType;
+import trading.indicator.BollingerBands;
+import trading.indicator.K;
+import trading.indicator.MovingAverage;
+import trading.indicator.RSI;
 import trading.receiver.FinvizStatsReceiver;
 import trading.receiver.GoogleQuoteReceiver;
 import trading.receiver.ReutersStatsReceiver;
@@ -21,7 +26,7 @@ import trading.receiver.YahooOptionReceiver;
 import trading.receiver.YahooStatsReceiver;
 
 public class ReceiveServiceImpl implements ReceiveService {
-	
+
 	private static final Logger logger = Logger.getLogger(ReceiveService.class);
 	private TradingDataDao dao;
 
@@ -38,25 +43,49 @@ public class ReceiveServiceImpl implements ReceiveService {
 		this.dao = dao;
 	}
 
-	public void fetchFundamentalData(Collection<Stock> stocks) throws Exception {
-		for(Stock stock : stocks){
-			FinvizStatsReceiver.fetch(stock);
-			ReutersStatsReceiver.fetch(stock);
-			YahooStatsReceiver.fetch(stock);
-			YahooAeReceiver.fetch(stock);
+	public List<Stock> fetchFundamentalData(Collection<Stock> stocks) {
+		List<Stock> failedStocks = new ArrayList<Stock>();
+		for (Stock stock : stocks) {
+			try {
+				FinvizStatsReceiver.fetch(stock);
+				ReutersStatsReceiver.fetch(stock);
+				YahooStatsReceiver.fetch(stock);
+				YahooAeReceiver.fetch(stock);
+			} catch (Throwable th) {
+				logger.error("Fetching Fundamemtal data error for " + stock.getTicker(), th);
+				failedStocks.add(stock);
+			}
 		}
+		return failedStocks;
 	}
 
-	public void fetchQuotes(Collection<Stock> stocks) throws Exception {
-		for(Stock stock : stocks){
-			GoogleQuoteReceiver.fetch(stock);
-			
+	public List<Stock> fetchQuotes(Collection<Stock> stocks) {
+		List<Stock> failedStocks = new ArrayList<Stock>();
+		for (Stock stock : stocks) {
+			try {
+				GoogleQuoteReceiver.fetch(stock);
+			} catch (Throwable th) {
+				logger.error("Fetching quotes error for " + stock.getTicker(), th);
+				failedStocks.add(stock);
+			}
+			List<Quote> quotes = stock.getQuotes();
+			BollingerBands.calcBands(quotes);
+			K.calcK(quotes);
+			MovingAverage.calcSimpleMA(quotes,13);
+			MovingAverage.calcSimpleMA(quotes,50);
+			MovingAverage.calcSimpleMA(quotes,100);
+			RSI.calcRSI(quotes);
 		}
+		return failedStocks;
 	}
 
-	public void fetchOptionData(Collection<Stock> stocks) throws Exception {
-		for(Stock stock : stocks){
-			YahooOptionReceiver.fetch(stock);
+	public void fetchOptionData(Collection<Stock> stocks) {
+		for (Stock stock : stocks) {
+			try {
+				YahooOptionReceiver.fetch(stock);
+			} catch (Throwable th) {
+				logger.error("Fetching options error for " + stock.getTicker(), th);
+			}
 		}
 	}
 
@@ -74,9 +103,9 @@ public class ReceiveServiceImpl implements ReceiveService {
 		for (String str : removedStocks) {
 			stockMap.remove(str);
 		}
-        logger.debug("Removed stocks: "+removedStocks);
-        logger.debug("Added stocks: "+addedStocks);
-		ArrayList<Stock> newStockList = new ArrayList<Stock>();
+		logger.debug("Removed stocks: " + removedStocks);
+		logger.debug("Added stocks: " + addedStocks);
+		ArrayList<Stock> tempList = new ArrayList<Stock>();
 		for (String str : addedStocks) {
 			Stock stock = new Stock();
 			stock.setTicker(str);
@@ -90,22 +119,43 @@ public class ReceiveServiceImpl implements ReceiveService {
 				}
 			}
 			stockMap.put(str, stock);
-			newStockList.add(stock);
+			tempList.add(stock);
 		}
-		if (newStockList.size() > 0) {
-	        logger.debug("Fetch stock stats");
-			fetchFundamentalData(newStockList);
-	        logger.debug("Fetch stock quotes");
-			fetchQuotes(newStockList);
-	        logger.debug("Fetch stock options");
-			fetchOptionData(newStockList);
-	        logger.debug("Save stock stats");
-			saveStats(stockMap.values());
-	        logger.debug("Save stock quotes");
-			saveQuotes(stockMap.values());
-	        logger.debug("Save stock options");
-			saveOptions(stockMap.values());
+		
+		if (tempList.size() > 0) {
+			logger.debug("Fetch stock stats");
+			List<Stock> failedStocks = fetchFundamentalData(tempList);
+			for (Stock stock : failedStocks) {
+				stockMap.remove(stock.getTicker());
+				tempList.remove(stock);
+			}
 		}
+		logger.debug("Save stock stats");
+		saveStats(stockMap.values());
+		
+		logger.debug("Fetch stock quotes");
+		tempList.clear();
+		for(Stock stock : stockMap.values()){
+			if(stock.getQuotes().size()==0){
+				tempList.add(stock);
+			}
+		}
+		fetchQuotes(tempList);
+		logger.debug("Save stock quotes");
+		saveQuotes(stockMap.values());
+		
+		logger.debug("Fetch stock options");
+		tempList.clear();
+		for(Stock stock : stockMap.values()){
+			if(stock.getOptions().size()==0){
+				tempList.add(stock);
+			}
+		}
+		this.fetchOptionData(tempList);
+
+		logger.debug("Save stock options");
+		saveOptions(stockMap.values());
+		
 		return stockMap.values();
 	}
 

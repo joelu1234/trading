@@ -1,11 +1,17 @@
 package trading.indicator;
 
+import java.util.List;
+
 import trading.domain.Quote;
 
 public final class RSI {
 	private static final int DAYS = 5;
 
 	private RSI() {
+	}
+	
+	public static void calcRSI(List<Quote> quotes) {
+		calcRSI(quotes.toArray(new Quote[0]));
 	}
 
 	public static void calcRSI(Quote[] quotes) {

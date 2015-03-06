@@ -1,5 +1,7 @@
 package trading.indicator;
 
+import java.util.List;
+
 import trading.domain.Quote;
 
 public final class BollingerBands {
@@ -9,7 +11,11 @@ public final class BollingerBands {
 
 	private BollingerBands() {
 	}
-	
+
+	public static void calcBands(List<Quote> quotes) {
+		calcBands(quotes.toArray(new Quote[0]));
+	}
+
 	public static void calcBands(Quote[] quotes) {
 		MovingAverage.calcSimpleMA(quotes, DAYS);
 		int end = quotes.length - 1;

@@ -7,11 +7,11 @@ import java.util.Map;
 import trading.domain.Stock;
 
 public interface ReceiveService {
-	void fetchFundamentalData(Collection<Stock> stocks) throws Exception;
+	List<Stock> fetchFundamentalData(Collection<Stock> stocks);
 
-	void fetchQuotes(Collection<Stock> stocks) throws Exception;
+	List<Stock> fetchQuotes(Collection<Stock> stocks);
 
-	void fetchOptionData(Collection<Stock> stocks) throws Exception;
+	void fetchOptionData(Collection<Stock> stocks);
 
 	Collection<Stock> loadStocks(Map<String, List<String>> portMap) throws Exception;
 

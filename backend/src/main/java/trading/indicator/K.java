@@ -1,5 +1,7 @@
 package trading.indicator;
 
+import java.util.List;
+
 import trading.domain.Quote;
 
 public final class K {
@@ -8,6 +10,10 @@ public final class K {
 	private K() {
 	}
 
+	public static void calcK(List<Quote> quotes) {
+		calcK(quotes.toArray(new Quote[0]), DAYS);
+	}
+	
 	public static void calcK(Quote[] quotes) {
 		calcK(quotes, DAYS);
 	}
