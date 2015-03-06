@@ -75,6 +75,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 			MovingAverage.calcSimpleMA(quotes,50);
 			MovingAverage.calcSimpleMA(quotes,100);
 			RSI.calcRSI(quotes);
+			logger.debug(stock);
 		}
 		return failedStocks;
 	}
@@ -92,7 +93,7 @@ public class ReceiveServiceImpl implements ReceiveService {
 	public Collection<Stock> loadStocks(Map<String, List<String>> portMap) throws Exception {
 
 		Map<String, Stock> stockMap = dao.loadStocks();
-
+		logger.debug("Existing stock #: " + stockMap.size());
 		Set<String> addedStocks = new HashSet<String>(portMap.keySet());
 		Set<String> removedStocks = new HashSet<String>(stockMap.keySet());
 		// these are new adds

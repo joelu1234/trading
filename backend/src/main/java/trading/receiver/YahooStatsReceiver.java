@@ -15,7 +15,15 @@ public class YahooStatsReceiver {
 	private static Logger logger = Logger.getLogger(YahooStatsReceiver.class);
 
 	private static void fetchSnapshot(Document doc, Stock stock) {
-		Element tr = doc.select("td:containsOwn(EBITDA (ttm))").get(1).parent(); // 2nd
+		
+		
+		Elements elems=doc.select("td:containsOwn(EBITDA (ttm))");
+		if(elems==null || elems.size()==0)
+		{
+			logger.error("stats data not avaliable for "+stock.getTicker());
+			return;
+		}
+		Element tr = elems.get(1).parent(); // 2nd
 																					// one
 		Elements tds = tr.getElementsByTag("td");
 		String value = tds.get(1).text().replace(",", "");

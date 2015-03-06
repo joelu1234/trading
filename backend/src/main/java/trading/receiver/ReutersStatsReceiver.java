@@ -44,9 +44,20 @@ public class ReutersStatsReceiver {
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
 				url = url + ".O";
 			}
+			else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
+				url = url + ".N";
+			}
 			// NYSE/NASD
 			logger.debug("url=" + url);
-			Document doc = Jsoup.connect(url).get();
+			
+			Document doc = null;
+			try {
+				doc = Jsoup.connect(url).get();
+			} catch (Exception ex) {
+				logger.warn("http read error, retry", ex);
+				Thread.sleep(1000);
+				doc = Jsoup.connect(url).get();
+			}
 			fetchSnapshot(doc, stock);
 		} else {
 			logger.debug(stock.getTicker() + " is not stock type");

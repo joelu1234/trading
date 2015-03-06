@@ -154,7 +154,6 @@ public class Quote implements Comparable<Quote> {
 		sb.append(formatter.format(close));
 		sb.append(",");
 		sb.append(volume);
-		sb.append("\n");
 		return sb.toString();
 	}
 

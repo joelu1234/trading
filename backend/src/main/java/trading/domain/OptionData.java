@@ -60,10 +60,6 @@ public class OptionData implements Comparable<OptionData> {
 		this.iv = iv;
 	}
 
-	public static String header() {
-		return "Contract,PutCall,Strike,Last,Volume,OI,IV\n";
-	}
-
 	@Override
 	public String toString() {
 		NumberFormat formatter = new DecimalFormat("#####.##");
@@ -79,7 +75,6 @@ public class OptionData implements Comparable<OptionData> {
 		sb.append(oi);
 		sb.append(",");
 		sb.append(formatter.format(iv));
-		sb.append("\n");
 		return sb.toString();
 	}
 

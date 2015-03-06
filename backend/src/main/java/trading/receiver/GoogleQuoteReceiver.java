@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
@@ -18,23 +20,83 @@ import trading.util.PropertyManager;
 public class GoogleQuoteReceiver {
 
 	private static Logger logger = Logger.getLogger(GoogleQuoteReceiver.class);
-	public static final String URL_DATE_FORMAT = "MMM+DD%2'C'+yyyy";
+	public static final String URL_DATE_FORMAT = "MMM+dd%2'C'+yyyy";
 	public static final String QUOTE_DATE_FORMAT = "dd-MMM-yy";
 
 	public static final float SPLIT_THRESHOLD = 0.3f;
 
-	private static Quote parseQuote(String[] strs) throws Exception {
+	private static Quote parseQuote(String[] strs, Quote prevQ) throws Exception {
+		boolean valid = true;
 		Quote q = new Quote();
 		q.setDate((new SimpleDateFormat(QUOTE_DATE_FORMAT).parse(strs[0])));
-		q.setOpen(Float.parseFloat(strs[1]));
-		q.setHigh(Float.parseFloat(strs[2]));
-		q.setLow(Float.parseFloat(strs[3]));
-		q.setClose(Float.parseFloat(strs[4]));
-		q.setVolume(Long.parseLong(strs[5]));
+
+		if (!"-".equals(strs[1])) {
+			q.setOpen(Float.parseFloat(strs[1]));
+		} else {
+			valid = false;
+			if (prevQ != null) {
+				q.setOpen(prevQ.getOpen());
+			}
+		}
+		if (!"-".equals(strs[2])) {
+			q.setHigh(Float.parseFloat(strs[2]));
+		} else {
+			valid = false;
+			if (prevQ != null) {
+				q.setHigh(prevQ.getHigh());
+			}
+		}
+		if (!"-".equals(strs[3])) {
+			q.setLow(Float.parseFloat(strs[3]));
+		} else {
+			valid = false;
+			if (prevQ != null) {
+				q.setLow(prevQ.getLow());
+			}
+		}
+		if (!"-".equals(strs[4])) {
+			q.setClose(Float.parseFloat(strs[4]));
+		} else {
+			valid = false;
+			if (prevQ != null) {
+				q.setClose(prevQ.getClose());
+			}
+		}
+		if (!"-".equals(strs[5]) && !"0".equals(strs[5])) {
+			q.setVolume(Long.parseLong(strs[5]));
+		} else {
+			valid = false;
+			if (prevQ != null) {
+				q.setVolume(prevQ.getVolume());
+			}
+		}
+
+		if (!valid) {
+			logger.warn("Invalid quote input: " + Arrays.toString(strs));
+			if (prevQ == null) {
+				return null;
+			} else {
+				if (q.getClose() > q.getHigh()) {
+					q.setHigh(q.getClose());
+				} else if (q.getClose() < q.getLow()) {
+					q.setLow(q.getClose());
+				}
+				if (q.getOpen() > q.getHigh()) {
+					q.setHigh(q.getOpen());
+				} else if (q.getOpen() < q.getLow()) {
+					q.setLow(q.getOpen());
+				}
+				logger.warn("Prev quote: " + prevQ.toString());
+				logger.warn("Faked quote: " + q.toString());
+			}
+		}
 		return q;
 	}
 
 	private static boolean hasSplit(Quote lastQuote, Quote newQuote) {
+		if (newQuote == null) {
+			return false; // invalid quote
+		}
 		float lastClose = lastQuote.getClose();
 		float newClose = newQuote.getClose();
 		float delta = (newClose - lastClose) / lastClose;
@@ -43,9 +105,17 @@ public class GoogleQuoteReceiver {
 
 	private static boolean fetch0(Stock stock, Date startDate, Date endDate) throws Exception {
 		List<Quote> list = stock.getQuotes();
-		String url = getUrl(stock.getTicker(), startDate, endDate);
-		BufferedReader in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+		String url = getUrl(stock, startDate, endDate);
+		logger.debug("url=" + url);
+		BufferedReader in = null;
 
+		try {
+			in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+		} catch (Throwable th) {
+			logger.warn("http read error, retry", th);
+			Thread.sleep(1000);
+			in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+		}
 		CSVReader reader = null;
 		try {
 			reader = new CSVReader(in);
@@ -54,13 +124,21 @@ public class GoogleQuoteReceiver {
 				logger.info("no quote for" + stock.getTicker());
 				return true;
 			}
-			if (list.size() > 0 && hasSplit(list.get(list.size() - 1), parseQuote(rowList.get(rowList.size() - 1)))) {
+
+			if (list.size() > 0 && hasSplit(list.get(list.size() - 1), parseQuote(rowList.get(rowList.size() - 1), null))) {
 				list.clear();
 				return false;
 			}
-			rowList.remove(0); // header
-			for (String[] strs : rowList) {
-				list.add(parseQuote(strs));
+			//rowList.remove(0); // header
+
+			Quote prevQuote = null;
+			for(int i=rowList.size()-1;i<=1;i--){
+				String[] strs = rowList.get(i);
+				Quote q = parseQuote(strs, prevQuote);
+				if (q != null) {
+					list.add(q);
+					prevQuote = q;
+				}
 			}
 		} finally {
 			if (reader != null) {
@@ -84,6 +162,7 @@ public class GoogleQuoteReceiver {
 			return;
 		}
 
+		endDate = DateUtils.addDays(endDate, 1);
 		if (fetch0(stock, startDate, endDate) == false) {
 			startDate = DateUtils.addYears(endDate, -5);
 			fetch0(stock, startDate, endDate);
@@ -91,9 +170,17 @@ public class GoogleQuoteReceiver {
 	}
 
 	// http://www.google.com/finance/historical?output=csv&q=AAPL&startdate=Feb+19%2C+2011&enddate=Feb+18%2C+2015
-	private static String getUrl(String ticker, Date startDate, Date endDate) {
+	private static String getUrl(Stock stock, Date startDate, Date endDate) {
 		StringBuilder sb = new StringBuilder(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_QUOTE));
-		sb.append(ticker);
+		if (stock.getFundamentalData().getExchange().contains("NASD")) {
+			sb.append("NASDAQ%3A");
+			sb.append(stock.getTicker());
+		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
+			sb.append("NYSE%3A");
+			sb.append(stock.getTicker());
+		} else {
+			sb.append(stock.getTicker());
+		}
 		sb.append("&startdate=");
 		sb.append(new SimpleDateFormat(URL_DATE_FORMAT).format(startDate));
 		sb.append("&enddate=");
