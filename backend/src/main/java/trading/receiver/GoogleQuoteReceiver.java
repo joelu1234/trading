@@ -173,8 +173,8 @@ public class GoogleQuoteReceiver {
 	private static String getUrl(Stock stock, Date startDate, Date endDate) {
 		StringBuilder sb = new StringBuilder(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_QUOTE));
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
-			sb.append("NASDAQ%3A");
-			sb.append(stock.getTicker());
+			sb.append("NASDAQ%3A");   
+			sb.append(stock.getTicker().replaceAll("-","\\."));
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
 			sb.append("NYSE%3A");
 			sb.append(stock.getTicker());

@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class Quote implements Comparable<Quote> {
@@ -141,33 +143,7 @@ public class Quote implements Comparable<Quote> {
 
 	@Override
 	public String toString() {
-		NumberFormat formatter = new DecimalFormat("#####.##");
-		StringBuilder sb = new StringBuilder();
-		sb.append(new SimpleDateFormat(DATE_FORMAT).format(date));
-		sb.append(",");
-		sb.append(formatter.format(open));
-		sb.append(",");
-		sb.append(formatter.format(high));
-		sb.append(",");
-		sb.append(formatter.format(low));
-		sb.append(",");
-		sb.append(formatter.format(close));
-		sb.append(",");
-		sb.append(volume);
-		return sb.toString();
-	}
-
-	public static Quote fromString(String str) throws Exception {
-		Quote quote = new Quote();
-		String[] strs = str.split(",");
-		int pos = 0;
-		quote.setDate(new SimpleDateFormat(DATE_FORMAT).parse(strs[pos++]));
-		quote.setOpen(Float.parseFloat(strs[pos++]));
-		quote.setHigh(Float.parseFloat(strs[pos++]));
-		quote.setLow(Float.parseFloat(strs[pos++]));
-		quote.setClose(Float.parseFloat(strs[pos++]));
-		quote.setVolume(Long.parseLong(strs[pos++].trim()));
-		return quote;
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -181,9 +157,6 @@ public class Quote implements Comparable<Quote> {
 
 		String str = q.toString();
 		System.out.println(str);
-
-		Quote q1 = Quote.fromString(str);
-		System.out.println(q1.toString());
 	}
 
 	public int compareTo(Quote arg0) {
