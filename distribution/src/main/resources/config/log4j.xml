@@ -29,7 +29,9 @@
 	<category name="java.sql.Connection">
 		<priority value="DEBUG" />
 	</category>
-
+	<category name="org.mortbay">
+		<priority value="ERROR" />
+	</category>
 	<root>
 		<level value="DEBUG" />
 		<appender-ref ref="DEBUG_FILE" />
