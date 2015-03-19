@@ -127,12 +127,13 @@ public class GoogleQuoteReceiver {
 
 			if (list.size() > 0 && hasSplit(list.get(list.size() - 1), parseQuote(rowList.get(rowList.size() - 1), null))) {
 				list.clear();
+				logger.info("Possible split, reload all quotes");
 				return false;
 			}
 			//rowList.remove(0); // header
 
 			Quote prevQuote = null;
-			for(int i=rowList.size()-1;i<=1;i--){
+			for(int i=rowList.size()-1;i>=1;i--){
 				String[] strs = rowList.get(i);
 				Quote q = parseQuote(strs, prevQuote);
 				if (q != null) {
@@ -174,13 +175,10 @@ public class GoogleQuoteReceiver {
 		StringBuilder sb = new StringBuilder(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_QUOTE));
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
 			sb.append("NASDAQ%3A");   
-			sb.append(stock.getTicker().replaceAll("-","\\."));
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
 			sb.append("NYSE%3A");
-			sb.append(stock.getTicker());
-		} else {
-			sb.append(stock.getTicker());
 		}
+		sb.append(stock.getTicker().replaceAll("-","\\."));
 		sb.append("&startdate=");
 		sb.append(new SimpleDateFormat(URL_DATE_FORMAT).format(startDate));
 		sb.append("&enddate=");

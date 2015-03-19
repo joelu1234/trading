@@ -75,7 +75,6 @@ public class ReceiveServiceImpl implements ReceiveService {
 			MovingAverage.calcSimpleMA(quotes,50);
 			MovingAverage.calcSimpleMA(quotes,100);
 			RSI.calcRSI(quotes);
-			logger.debug(stock.getQuotes());
 		}
 		return failedStocks;
 	}
