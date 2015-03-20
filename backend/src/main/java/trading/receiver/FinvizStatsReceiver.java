@@ -162,7 +162,7 @@ public class FinvizStatsReceiver {
 	}
 
 	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getInstance().getProperty(PropertyManager.FINVIZ_STATS) + stock.getTicker();
+		String url = PropertyManager.getProperty(PropertyManager.FINVIZ_STATS) + stock.getTicker();
 		logger.debug("url=" + url);
 		Document doc = null;
 		try

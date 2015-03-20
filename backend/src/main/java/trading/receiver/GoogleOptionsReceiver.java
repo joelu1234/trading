@@ -39,7 +39,7 @@ public class GoogleOptionsReceiver implements Receiver {
 			int year = cal.get(Calendar.YEAR);
 			int month = cal.get(Calendar.MONTH) + 1;
 			int day = cal.get(Calendar.DAY_OF_MONTH);
-			String uri = String.format(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_OPTION), 
+			String uri = String.format(PropertyManager.getProperty(PropertyManager.GOOGLE_OPTION), 
 					stock.getTicker().toUpperCase(), day, month, year);
 			HttpGet request = new HttpGet(uri);
 			ResponseHandler<String> responseHdlr = new ResponseHandler<String>() {

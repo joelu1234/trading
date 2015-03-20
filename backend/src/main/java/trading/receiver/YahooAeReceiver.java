@@ -38,7 +38,7 @@ public class YahooAeReceiver {
 
 	public static void fetch(Stock stock) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK && "USA".equalsIgnoreCase(stock.getFundamentalData().getCountry())) {
-			String url = PropertyManager.getInstance().getProperty(PropertyManager.YAHOO_AE) + stock.getTicker();
+			String url = PropertyManager.getProperty(PropertyManager.YAHOO_AE) + stock.getTicker();
 			logger.debug("url=" + url);
 			Document doc = null;
 			try {

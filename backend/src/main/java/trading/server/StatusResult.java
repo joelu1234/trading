@@ -1,4 +1,4 @@
-package trading.service;
+package trading.server;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;

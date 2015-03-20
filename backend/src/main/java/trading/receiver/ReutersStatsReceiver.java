@@ -40,7 +40,7 @@ public class ReutersStatsReceiver {
 	public static void fetch(Stock stock) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
 			String ticker = stock.getTicker().replace("-", ""); // BF-B changr to BFB
-			String url = PropertyManager.getInstance().getProperty(PropertyManager.REUTERS_STATS) + ticker;
+			String url = PropertyManager.getProperty(PropertyManager.REUTERS_STATS) + ticker;
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
 				url = url + ".O";
 			}

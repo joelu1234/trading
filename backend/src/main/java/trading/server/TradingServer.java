@@ -1,4 +1,4 @@
-package trading.service;
+package trading.server;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +17,11 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import trading.domain.Stock;
+import trading.service.ReceiveService;
 import trading.util.PropertyManager;
 
 public class TradingServer implements Runnable {
@@ -57,9 +60,9 @@ public class TradingServer implements Runnable {
 		
 		logger.info("Schedule Quartz jobs");
 		JobDetail job1 = JobBuilder.newJob(WeekdayJob.class).withIdentity("Weekday Job", "trading group").build();
-		Trigger trigger1 = TriggerBuilder.newTrigger().withIdentity("Weekday Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(propertyManager.getProperty(PropertyManager.QUARTZ_WEEKDAY_SCHEDULE))).build();
+		Trigger trigger1 = TriggerBuilder.newTrigger().withIdentity("Weekday Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(PropertyManager.getProperty(PropertyManager.QUARTZ_WEEKDAY_SCHEDULE))).build();
 		JobDetail job2 = JobBuilder.newJob(WeekdayJob.class).withIdentity("Weekend Job", "trading group").build();
-		Trigger trigger2 = TriggerBuilder.newTrigger().withIdentity("Weekend Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(propertyManager.getProperty(PropertyManager.QUARTZ_WEEKEND_SCHEDULE))).build();
+		Trigger trigger2 = TriggerBuilder.newTrigger().withIdentity("Weekend Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(PropertyManager.getProperty(PropertyManager.QUARTZ_WEEKEND_SCHEDULE))).build();
 
 		Scheduler scheduler = new StdSchedulerFactory().getScheduler();
 		scheduler.start();
@@ -68,8 +71,8 @@ public class TradingServer implements Runnable {
 	}
 
 	public void run() {
-		String serverName = propertyManager.getProperty(PropertyManager.JETTY_SERVER_NAME);
-		int port = Integer.parseInt(propertyManager.getProperty(PropertyManager.JETTY_SERVER_PORT));
+		String serverName = PropertyManager.getProperty(PropertyManager.JETTY_SERVER_NAME);
+		int port = Integer.parseInt(PropertyManager.getProperty(PropertyManager.JETTY_SERVER_PORT));
 		try {
 			logger.info("Starting " + serverName);
 
@@ -120,8 +123,11 @@ public class TradingServer implements Runnable {
 	}
 
 	private void init() throws Exception {
-		setPropertyManager(PropertyManager.getInstance());
-		setReceiveService(new ReceiveServiceImpl());
+		
+		@SuppressWarnings("resource")
+		ApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
+		setPropertyManager((PropertyManager)context.getBean("propertyManager"));
+		setReceiveService((ReceiveService)context.getBean("receiveService"));
 		loadStocks();
 		scheduleQuartzJobs();
 	}

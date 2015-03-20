@@ -172,7 +172,7 @@ public class GoogleQuoteReceiver {
 
 	// http://www.google.com/finance/historical?output=csv&q=AAPL&startdate=Feb+19%2C+2011&enddate=Feb+18%2C+2015
 	private static String getUrl(Stock stock, Date startDate, Date endDate) {
-		StringBuilder sb = new StringBuilder(PropertyManager.getInstance().getProperty(PropertyManager.GOOGLE_QUOTE));
+		StringBuilder sb = new StringBuilder(PropertyManager.getProperty(PropertyManager.GOOGLE_QUOTE));
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
 			sb.append("NASDAQ%3A");   
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {

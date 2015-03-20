@@ -1,17 +1,17 @@
-package trading.service;
+package trading.server;
 
 import org.apache.log4j.Logger;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-public class WeekdayJob implements Job {
+public class WeekendJob implements Job {
 
-	private static final Logger logger = Logger.getLogger(WeekdayJob.class);
-	
+	private static final Logger logger = Logger.getLogger(WeekendJob.class);
+
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 
-		logger.debug("Weekday job");
+		logger.debug("Weekend job");
 
 	}
 

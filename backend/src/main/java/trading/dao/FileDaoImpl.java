@@ -27,11 +27,6 @@ public class FileDaoImpl implements TradingDataDao{
 
 	private PropertyManager propertyManager;
 
-	public FileDaoImpl()
-	{
-		propertyManager = PropertyManager.getInstance();
-	}
-	
 	public PropertyManager getPropertyManager() {
 		return propertyManager;
 	}
@@ -57,7 +52,7 @@ public class FileDaoImpl implements TradingDataDao{
 		Map<String, Stock> stocks = new HashMap<String, Stock>();
 		File file = propertyManager.getStatsFile();
 		if (file.exists()) {
-			String nameWithoutExt = propertyManager.getProperty(PropertyManager.FILE_STATS);
+			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_STATS);
 			Map<String, FundamentalData> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, FundamentalData>>() {
 			});
 			for (Map.Entry<String, FundamentalData> entry : map.entrySet()) {
@@ -70,7 +65,7 @@ public class FileDaoImpl implements TradingDataDao{
 		}
 		file = propertyManager.getQuoteFile();
 		if (file.exists()) {
-			String nameWithoutExt = propertyManager.getProperty(PropertyManager.FILE_QUOTES);
+			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_QUOTES);
 			Map<String, List<Quote>> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, List<Quote>>>() {
 			});
 			for (Map.Entry<String, List<Quote>> entry : map.entrySet()) {
@@ -87,7 +82,7 @@ public class FileDaoImpl implements TradingDataDao{
 		}
 		file = propertyManager.getOptionFile();
 		if (file.exists()) {
-			String nameWithoutExt = propertyManager.getProperty(PropertyManager.FILE_OPTIONS);
+			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_OPTIONS);
 			Map<String, List<OptionData>> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, List<OptionData>>>() {
 			});
 			for (Map.Entry<String, List<OptionData>> entry : map.entrySet()) {
@@ -120,7 +115,7 @@ public class FileDaoImpl implements TradingDataDao{
 			map.put(stock.getTicker(), stock.getFundamentalData());
 		}
 		File file = propertyManager.getStatsFile();
-		String nameWithoutExt =  propertyManager.getProperty(PropertyManager.FILE_STATS);
+		String nameWithoutExt =  PropertyManager.getProperty(PropertyManager.FILE_STATS);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
 		writeToZipFile(file, nameWithoutExt, bytes);
 	}
@@ -131,7 +126,7 @@ public class FileDaoImpl implements TradingDataDao{
 			map.put(stock.getTicker(), stock.getQuotes());
 		}
 		File file = propertyManager.getQuoteFile();
-		String nameWithoutExt = propertyManager.getProperty(PropertyManager.FILE_QUOTES);
+		String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_QUOTES);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
 		writeToZipFile(file, nameWithoutExt, bytes);
 	}
@@ -142,7 +137,7 @@ public class FileDaoImpl implements TradingDataDao{
 			map.put(stock.getTicker(), stock.getOptions());
 		}
 		File file = propertyManager.getOptionFile();
-		String nameWithoutExt = propertyManager.getProperty(PropertyManager.FILE_OPTIONS);
+		String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_OPTIONS);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
 		writeToZipFile(file, nameWithoutExt, bytes);
 	}

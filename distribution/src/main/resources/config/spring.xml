@@ -2,8 +2,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
-	
-	<bean id="TradingDataDao" class="trading.dao.FileDaoImpl">
+
+	<bean id="propertyManager" class="trading.util.PropertyManager"
+		init-method="loadRefernceData" />
+
+	<bean id="tradingDataDao" class="trading.dao.FileDaoImpl">
+		<property name="propertyManager" ref="propertyManager" />
+	</bean>
+
+	<bean id="receiveService" class="trading.service.ReceiveServiceImpl">
+		<property name="dao" ref="tradingDataDao" />
 	</bean>
 
 </beans>

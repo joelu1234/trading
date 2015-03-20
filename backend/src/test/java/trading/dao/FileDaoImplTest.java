@@ -23,9 +23,9 @@ public class FileDaoImplTest {
 	@Test
 	public void test() throws Exception {
 		PropertyManager mockPropertyManager = mock(PropertyManager.class);
-		when(mockPropertyManager.getProperty(PropertyManager.FILE_STATS)).thenReturn("stats.json");
-		when(mockPropertyManager.getProperty(PropertyManager.FILE_QUOTES)).thenReturn("quotes.json");
-		when(mockPropertyManager.getProperty(PropertyManager.FILE_OPTIONS)).thenReturn("options.json");
+		PropertyManager.setProperty(PropertyManager.FILE_STATS,"stats.json");
+		PropertyManager.setProperty(PropertyManager.FILE_QUOTES,"quotes.json");
+		PropertyManager.setProperty(PropertyManager.FILE_OPTIONS,"options.json");
 		
 		when(mockPropertyManager.getStatsFile()).thenReturn(new File("stats.json.zip"));
 		when(mockPropertyManager.getQuoteFile()).thenReturn(new File("quotes.json.zip"));

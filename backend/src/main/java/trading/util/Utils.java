@@ -31,7 +31,7 @@ public class Utils {
 			cal.set(Calendar.DAY_OF_WEEK_IN_MONTH, 3);
 		}
 
-		if (PropertyManager.getInstance().isHoliday(cal.getTime())) {
+		if (PropertyManager.isHoliday(cal.getTime())) {
 			cal.add(Calendar.DATE, -1);
 		}
 		return cal.getTime();

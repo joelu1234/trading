@@ -59,11 +59,9 @@ public class PropertyManager {
 	final public static String QUARTZ_WEEKDAY_SCHEDULE = "quartz.weekday.schedule";
 	final public static String QUARTZ_WEEKEND_SCHEDULE = "quartz.weekend.schedule";
 
-	private static PropertyManager propertyManager = null;
+	private static Properties props = new Properties();
 
-	private Properties props = new Properties();
-
-	private Set<Date> holidays = new HashSet<Date>();
+	private static Set<Date> holidays = new HashSet<Date>();
 
 	private Map<String, List<String>> portfolio = new HashMap<String, List<String>>();
 
@@ -73,10 +71,6 @@ public class PropertyManager {
 
 	private File warPath;
 	private File webXmlPath;
-
-	private PropertyManager() throws Exception {
-		loadRefernceData();
-	}
 
 	private void loadHolidays(Set<String> set) throws ParseException {
 		for (String str : set) {
@@ -105,24 +99,17 @@ public class PropertyManager {
 		}
 	}
 
-	public synchronized static PropertyManager getInstance() {
-		if (propertyManager == null) {
-			try {
-				propertyManager = new PropertyManager();
-			} catch (Throwable th) {
-				logger.error("Unable to create PropertyManager", th);
-			}
-		}
-		return propertyManager;
-	}
-
 	public void loadRefernceData() throws Exception {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		props.load(loader.getResourceAsStream(FILE_CONF));
 		Properties hProps = new Properties();
 		hProps.load(loader.getResourceAsStream(FILE_HOLIDAY));
+		logger.debug("Load holidays...");
 		loadHolidays(hProps.stringPropertyNames());
+		logger.debug("LHolidays: "+hProps);
+		logger.debug("Load Portfolio...");		
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
+		logger.debug("Portfolio: "+portfolio);
 
 		configDataFiles(new File(loader.getResource(DIR_DATA).toURI()));
 		configJettyPaths(new File(loader.getResource(DIR_CONFIG).toURI()));
@@ -139,11 +126,16 @@ public class PropertyManager {
 		webXmlPath = new File(warPath, getProperty(JETTY_WEB_XML));
 	}
 
-	public String getProperty(String key) {
+	public static String getProperty(String key) {
 		return props.getProperty(key, "");
 	}
+	
+	public static void setProperty(String key,String value) {
+		props.setProperty(key, value);
+	}
 
-	public boolean isHoliday(Date date) {
+
+	public static boolean isHoliday(Date date) {
 		return holidays != null && holidays.contains(DateUtils.truncate(date, Calendar.DATE));
 	}
 

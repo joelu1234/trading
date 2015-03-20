@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import trading.dao.FileDaoImpl;
 import trading.dao.TradingDataDao;
 import trading.domain.Quote;
 import trading.domain.Stock;
@@ -29,11 +28,6 @@ public class ReceiveServiceImpl implements ReceiveService {
 
 	private static final Logger logger = Logger.getLogger(ReceiveService.class);
 	private TradingDataDao dao;
-
-	public ReceiveServiceImpl() {
-		this.dao = new FileDaoImpl();
-
-	}
 
 	public TradingDataDao getDao() {
 		return dao;
