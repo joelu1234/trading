@@ -43,19 +43,6 @@ public class TradingServer implements Runnable {
 		webXmlPath = new File(warPath, props.getProperty(KEY_WEB_XML));
  	}
 		
-	public TradingDataService getDataService() {
-		return dataService;
-	}
-
-	public void setDataService(TradingDataService dataService) {
-		this.dataService = dataService;
-	}
-
-	private void loadStocks() throws Exception {
-		logger.info("Load in stocks");
-		 dataService.loadStocks();
-	}
-
 	public void run() {
 		String serverName = props.getProperty(KEY_SERVER_NAME);
 		int port = Integer.parseInt(props.getProperty(KEY_SERVER_PORT));
@@ -112,8 +99,9 @@ public class TradingServer implements Runnable {
 		loadProperties();
 		@SuppressWarnings("resource")
 		ApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
-		setDataService((TradingDataService)context.getBean("dataService"));
-		loadStocks();
+		dataService =(TradingDataService)context.getBean("dataService");
+		logger.info("Load in stocks");
+		dataService.loadStocks();
 	}
 
 	public static void main(String[] args) {
