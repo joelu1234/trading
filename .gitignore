@@ -13,7 +13,7 @@ log
 *.releaseBackup
 
 logs
-*.json.zip
+*.zip
 
 # Backup files
 *~
