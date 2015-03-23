@@ -9,7 +9,6 @@ import org.jsoup.select.Elements;
 import trading.domain.Stock;
 import trading.domain.StockType;
 import trading.util.Constants;
-import trading.util.PropertyManager;
 
 public class YahooStatsReceiver {
 	private static Logger logger = Logger.getLogger(YahooStatsReceiver.class);
@@ -69,9 +68,9 @@ public class YahooStatsReceiver {
 		stock.getFundamentalData().setLeveredFreeCashFlow(s);
 	}
 
-	public static void fetch(Stock stock) throws Exception {
+	public static void fetch(Stock stock, String url) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
-			String url = PropertyManager.getProperty(PropertyManager.YAHOO_STATS) + stock.getTicker();
+			url =url + stock.getTicker();
 			logger.debug("url=" + url);
 			Document doc = null;
 			try
@@ -95,7 +94,7 @@ public class YahooStatsReceiver {
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
-		fetch(stock);
+		fetch(stock,"http://finance.yahoo.com/q/ks?s=");
 		System.out.println(stock);
 	}
 }

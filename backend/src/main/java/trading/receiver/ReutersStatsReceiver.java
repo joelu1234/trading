@@ -9,7 +9,6 @@ import org.jsoup.select.Elements;
 import trading.domain.Stock;
 import trading.domain.StockType;
 import trading.util.Constants;
-import trading.util.PropertyManager;
 
 public class ReutersStatsReceiver {
 	private static Logger logger = Logger.getLogger(ReutersStatsReceiver.class);
@@ -37,10 +36,10 @@ public class ReutersStatsReceiver {
 		}
 	}
 
-	public static void fetch(Stock stock) throws Exception {
+	public static void fetch(Stock stock, String url) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
 			String ticker = stock.getTicker().replace("-", ""); // BF-B changr to BFB
-			String url = PropertyManager.getProperty(PropertyManager.REUTERS_STATS) + ticker;
+			url = url + ticker;
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
 				url = url + ".O";
 			}
@@ -70,7 +69,7 @@ public class ReutersStatsReceiver {
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
-		fetch(stock);
+		fetch(stock,"http://www.reuters.com/finance/stocks/financialHighlights?symbol=");
 		System.out.println(stock);
 	}
 }

@@ -14,7 +14,6 @@ import org.jsoup.select.Elements;
 import trading.domain.AnalystOpinion;
 import trading.domain.Stock;
 import trading.domain.StockType;
-import trading.util.PropertyManager;
 import trading.util.Constants;
 
 public class FinvizStatsReceiver {
@@ -161,8 +160,8 @@ public class FinvizStatsReceiver {
 		}
 	}
 
-	public static void fetch(Stock stock) throws Exception {
-		String url = PropertyManager.getProperty(PropertyManager.FINVIZ_STATS) + stock.getTicker();
+	public static void fetch(Stock stock, String url) throws Exception {
+	    url = url + stock.getTicker();
 		logger.debug("url=" + url);
 		Document doc = null;
 		try
@@ -186,7 +185,7 @@ public class FinvizStatsReceiver {
 		Stock stock = new Stock();
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.ETF);
-		fetch(stock);
+		fetch(stock,"http://finviz.com/quote.ashx?t=");
 		System.out.println(stock);
 	}
 }

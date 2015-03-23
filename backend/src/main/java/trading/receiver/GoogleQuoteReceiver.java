@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import trading.domain.Quote;
 import trading.domain.Stock;
-import trading.util.PropertyManager;
+
 
 public class GoogleQuoteReceiver {
 
@@ -103,9 +103,9 @@ public class GoogleQuoteReceiver {
 		return Math.abs(delta) > SPLIT_THRESHOLD;
 	}
 
-	private static boolean fetch0(Stock stock, Date startDate, Date endDate) throws Exception {
+	private static boolean fetch0(Stock stock, Date startDate, Date endDate, String url) throws Exception {
 		List<Quote> list = stock.getQuotes();
-		String url = getUrl(stock, startDate, endDate);
+		url = getUrl(stock, startDate, endDate, url);
 		logger.debug("url=" + url);
 		BufferedReader in = null;
 
@@ -149,7 +149,7 @@ public class GoogleQuoteReceiver {
 		return true;
 	}
 
-	public static void fetch(Stock stock) throws Exception {
+	public static void fetch(Stock stock, String url) throws Exception {
 		List<Quote> list = stock.getQuotes();
 		Date endDate = DateUtils.truncate(new Date(), Calendar.DATE);
 		Date startDate = null;
@@ -164,15 +164,15 @@ public class GoogleQuoteReceiver {
 		}
 
 		endDate = DateUtils.addDays(endDate, 1);
-		if (fetch0(stock, startDate, endDate) == false) {
+		if (fetch0(stock, startDate, endDate, url) == false) {
 			startDate = DateUtils.addYears(endDate, -5);
-			fetch0(stock, startDate, endDate);
+			fetch0(stock, startDate, endDate, url);
 		}
 	}
 
 	// http://www.google.com/finance/historical?output=csv&q=AAPL&startdate=Feb+19%2C+2011&enddate=Feb+18%2C+2015
-	private static String getUrl(Stock stock, Date startDate, Date endDate) {
-		StringBuilder sb = new StringBuilder(PropertyManager.getProperty(PropertyManager.GOOGLE_QUOTE));
+	private static String getUrl(Stock stock, Date startDate, Date endDate, String url) {
+		StringBuilder sb = new StringBuilder(url);
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
 			sb.append("NASDAQ%3A");   
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
@@ -194,7 +194,7 @@ public class GoogleQuoteReceiver {
 		// System.out.println(date+" "+date.getTime());
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		fetch(stock);
+		fetch(stock,"http://www.google.com/finance/historical?output=csv&q=");
 		System.out.println(stock);
 	}
 }

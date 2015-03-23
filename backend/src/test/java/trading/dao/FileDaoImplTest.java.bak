@@ -16,7 +16,6 @@ import org.junit.Test;
 import trading.domain.OptionData;
 import trading.domain.Quote;
 import trading.domain.Stock;
-import trading.util.PropertyManager;
 
 public class FileDaoImplTest {
 

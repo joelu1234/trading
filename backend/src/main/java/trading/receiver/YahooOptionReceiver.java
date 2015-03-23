@@ -12,10 +12,7 @@ import org.jsoup.select.Elements;
 
 import trading.domain.OptionData;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Constants;
-import trading.util.PropertyManager;
-import trading.util.Utils;
 
 public class YahooOptionReceiver {
 	private static Logger logger = Logger.getLogger(YahooOptionReceiver.class);
@@ -44,9 +41,9 @@ public class YahooOptionReceiver {
 
 	}
 
-	public static void fetch(Stock stock) throws Exception {
+	public static void fetch(Stock stock, Date oeDate, String url) throws Exception {
 		if (stock.getFundamentalData().isOptionable()) {
-			String url = getUrl(stock.getTicker());
+			url = getUrl(stock.getTicker(), oeDate, url);
 			logger.debug("url=" + url);
 			Document doc = null;
 			try {
@@ -80,22 +77,24 @@ public class YahooOptionReceiver {
 
 	// http://finance.yahoo.com/q/op?s=AAPL&date=1424390400 time is seconds in
 	// GMT
-	private static String getUrl(String ticker) {
-		StringBuilder sb = new StringBuilder(PropertyManager.getProperty(PropertyManager.YAHOO_OPTION));
+	private static String getUrl(String ticker, Date oeDate, String url) {
+		StringBuilder sb = new StringBuilder(url);
 		sb.append(ticker);
 		sb.append("&&date=");
-		sb.append(getGMTSeconds(Utils.getNextMonthlyOEDate()));
+		sb.append(getGMTSeconds(oeDate));
 		return sb.toString();
 
 	}
 
+	/*
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
 		stock.getFundamentalData().setOptionable(true);
-		fetch(stock);
+		fetch(stock,"http://finance.yahoo.com/q/op?s=");
 		System.out.println(stock.getOptions());
 	}
+	*/
 }

@@ -1,40 +1,116 @@
 package trading.dao;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 import trading.domain.FundamentalData;
 import trading.domain.OptionData;
 import trading.domain.Quote;
 import trading.domain.Stock;
 import trading.util.Constants;
-import trading.util.PropertyManager;
 
 public class FileDaoImpl implements TradingDataDao{
 
-	private PropertyManager propertyManager;
-
-	public PropertyManager getPropertyManager() {
-		return propertyManager;
+	private static Logger logger = Logger.getLogger(TradingDataDao.class);
+	
+	final public static String KEY_FILE_STATS = "data.stats.file";
+	final public static String KEY_FILE_QUOTES = "data.quote.file";
+	final public static String KEY_FILE_OPTIONS = "data.option.file";
+	
+	final public static String DIR_DATA = "stockdata";
+	final public static String DIR_PORTFOLIO = "portfolio";
+	final public static String FILE_HOLIDAY = "config/holidays.properties";
+	
+	private File statsFile;
+	private File quoteFile;
+	private File optionFile;
+	
+	private String statsFileName;
+	private String quoteFileName;
+	private String optionFileName;
+	
+	private Map<String, List<String>> portfolio = new HashMap<String, List<String>>();
+	
+	private Set<Date> holidays = new HashSet<Date>();
+	
+	@Autowired
+	private Environment env;
+		
+	public void init() throws Exception {
+		
+		statsFileName=env.getProperty(KEY_FILE_STATS);
+		quoteFileName=env.getProperty(KEY_FILE_QUOTES);
+		optionFileName=env.getProperty(KEY_FILE_OPTIONS);
+		
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		File rootDir=(new File(loader.getResource(DIR_DATA).toURI()));
+		statsFile = new File(rootDir, statsFileName + ".zip");
+		quoteFile = new File(rootDir, quoteFileName + ".zip");
+		optionFile = new File(rootDir, optionFileName + ".zip");
+		
+		logger.debug("Load Portfolio...");		
+		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
+		logger.debug("Portfolio: "+portfolio);
+		
+		loadHolidays(loader);
 	}
-
-	public void setPropertyManager(PropertyManager propertyManager) {
-		this.propertyManager = propertyManager;
+	
+	private void loadPortfolio(URL dirUri) throws URISyntaxException, FileNotFoundException, IOException {
+		File dir = new File(dirUri.toURI());
+		for (String name : dir.list()) {
+			String index = name.split("\\.")[0].toUpperCase();
+			Properties stocks = new Properties();
+			File f = new File(dir, name);
+			if (f.isDirectory())
+				continue;
+			stocks.load(new FileInputStream(f));
+			for (String stock : stocks.stringPropertyNames()) {
+				stock=stock.replaceAll("\\.", "-"); //BF.B change to BF-B
+				List<String> indices = portfolio.get(stock);
+				if (indices == null) {
+					indices = new ArrayList<String>();
+					portfolio.put(stock, indices);
+				}
+				indices.add(index);
+			}
+		}
 	}
-
+	
+	private void loadHolidays(ClassLoader loader) throws Exception {
+		logger.debug("Load holidays...");
+		Properties props = new Properties();
+		props.load(loader.getResourceAsStream(FILE_HOLIDAY));
+		logger.debug("Holidays: "+props);
+		for (String str : props.stringPropertyNames()) {
+			holidays.add(new SimpleDateFormat(Constants.DATE_FORMAT).parse(str));
+		}
+	}
+		
 	private byte[] readFromZipFile(File file, String entryName) throws IOException {
 		ZipFile zFile = null;
 		try {
@@ -50,10 +126,8 @@ public class FileDaoImpl implements TradingDataDao{
 
 	public Map<String, Stock> loadStocks() throws Exception {
 		Map<String, Stock> stocks = new HashMap<String, Stock>();
-		File file = propertyManager.getStatsFile();
-		if (file.exists()) {
-			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_STATS);
-			Map<String, FundamentalData> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, FundamentalData>>() {
+		if (statsFile.exists()) {
+			Map<String, FundamentalData> map = getObjectMapper().readValue(readFromZipFile(statsFile, statsFileName), new TypeReference<HashMap<String, FundamentalData>>() {
 			});
 			for (Map.Entry<String, FundamentalData> entry : map.entrySet()) {
 				String ticker = entry.getKey();
@@ -63,10 +137,9 @@ public class FileDaoImpl implements TradingDataDao{
 				stocks.put(ticker, stock);
 			}
 		}
-		file = propertyManager.getQuoteFile();
-		if (file.exists()) {
-			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_QUOTES);
-			Map<String, List<Quote>> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, List<Quote>>>() {
+
+		if (quoteFile.exists()) {
+			Map<String, List<Quote>> map = getObjectMapper().readValue(readFromZipFile(quoteFile, quoteFileName), new TypeReference<HashMap<String, List<Quote>>>() {
 			});
 			for (Map.Entry<String, List<Quote>> entry : map.entrySet()) {
 				String ticker = entry.getKey();
@@ -80,10 +153,8 @@ public class FileDaoImpl implements TradingDataDao{
 			}
 
 		}
-		file = propertyManager.getOptionFile();
-		if (file.exists()) {
-			String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_OPTIONS);
-			Map<String, List<OptionData>> map = getObjectMapper().readValue(readFromZipFile(file, nameWithoutExt), new TypeReference<HashMap<String, List<OptionData>>>() {
+		if (optionFile.exists()) {
+			Map<String, List<OptionData>> map = getObjectMapper().readValue(readFromZipFile(optionFile, optionFileName), new TypeReference<HashMap<String, List<OptionData>>>() {
 			});
 			for (Map.Entry<String, List<OptionData>> entry : map.entrySet()) {
 				String ticker = entry.getKey();
@@ -114,10 +185,8 @@ public class FileDaoImpl implements TradingDataDao{
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getFundamentalData());
 		}
-		File file = propertyManager.getStatsFile();
-		String nameWithoutExt =  PropertyManager.getProperty(PropertyManager.FILE_STATS);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
-		writeToZipFile(file, nameWithoutExt, bytes);
+		writeToZipFile(statsFile, statsFileName, bytes);
 	}
 
 	public void saveQuotes(Collection<Stock> stocks) throws Exception {
@@ -125,10 +194,8 @@ public class FileDaoImpl implements TradingDataDao{
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getQuotes());
 		}
-		File file = propertyManager.getQuoteFile();
-		String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_QUOTES);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
-		writeToZipFile(file, nameWithoutExt, bytes);
+		writeToZipFile(quoteFile, quoteFileName, bytes);
 	}
 
 	public void saveOptions(Collection<Stock> stocks) throws Exception {
@@ -136,10 +203,8 @@ public class FileDaoImpl implements TradingDataDao{
 		for (Stock stock : stocks) {
 			map.put(stock.getTicker(), stock.getOptions());
 		}
-		File file = propertyManager.getOptionFile();
-		String nameWithoutExt = PropertyManager.getProperty(PropertyManager.FILE_OPTIONS);
 		byte[] bytes = getObjectMapper().writeValueAsBytes(map);
-		writeToZipFile(file, nameWithoutExt, bytes);
+		writeToZipFile(optionFile, optionFileName, bytes);
 	}
 
 	private static ObjectMapper getObjectMapper() {
@@ -148,4 +213,12 @@ public class FileDaoImpl implements TradingDataDao{
 		return mapper;
 	}
 
+	public Map<String, List<String>> getPortfolio() throws Exception {
+		return this.portfolio;
+	}
+
+	public Set<Date> getHolidays() throws Exception {
+		return holidays;
+	}
+	
 }

@@ -1,17 +1,60 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+	
+	<context:property-placeholder location="classpath:conf.properties" />
 
-	<bean id="propertyManager" class="trading.util.PropertyManager"
-		init-method="loadRefernceData" />
+	<bean id="dataDao" class="trading.dao.FileDaoImpl" init-method="init"/>
 
-	<bean id="tradingDataDao" class="trading.dao.FileDaoImpl">
-		<property name="propertyManager" ref="propertyManager" />
+	<bean id="dataService" class="trading.service.TradingDataServiceImpl">
+		<property name="dao" ref="dataDao" />
 	</bean>
 
-	<bean id="receiveService" class="trading.service.ReceiveServiceImpl">
-		<property name="dao" ref="tradingDataDao" />
+	<bean id="scheduleService" class="trading.service.ScheduleServiceImpl">
+		<property name="dataService" ref="dataService" />
+	</bean>
+
+	<bean id="weekdayJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="scheduleService" />
+		<property name="targetMethod" value="weekdayRun" />
+	</bean>
+
+	<bean id="weekendJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="scheduleService" />
+		<property name="targetMethod" value="weekendRun" />
+	</bean>
+
+	<bean id="weekdayCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="weekdayJobDetail" />
+		<property name="cronExpression" value="${quartz.weekday.schedule}" />
+	</bean>
+
+	<bean id="weekendCronTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="weekendJobDetail" />
+		<property name="cronExpression" value="${quartz.weekend.schedule}" />
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="jobDetails">
+			<list>
+				<ref bean="weekdayJobDetail" />
+				<ref bean="weekendJobDetail" />
+			</list>
+		</property>
+
+		<property name="triggers">
+			<list>
+				<ref bean="weekdayCronTrigger" />
+				<ref bean="weekendCronTrigger" />
+			</list>
+		</property>
 	</bean>
 
 </beans>

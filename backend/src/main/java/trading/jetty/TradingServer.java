@@ -1,8 +1,7 @@
-package trading.server;
+package trading.jetty;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.mortbay.jetty.*;
@@ -10,69 +9,56 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.thread.QueuedThreadPool;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import trading.domain.Stock;
-import trading.service.ReceiveService;
-import trading.util.PropertyManager;
+import trading.service.TradingDataService;
 
 public class TradingServer implements Runnable {
 	private static final Logger logger = Logger.getLogger(TradingServer.class);
+	
+	final public static String KEY_SERVER_NAME = "server.name";
+	final public static String KEY_SERVER_PORT = "server.port";
+	final public static String KEY_PATH_WAR = "path.war";
+	final public static String KEY_WEB_XML = "web.xml";
+	
+	final public static String FILE_CONF = "config/jetty.properties";
+	final public static String DIR_CONFIG = "config";
 
 	public static final String URL_STATUS = "/status";
 	public static final String PATH_CONTEXT = "/";
 
-	private PropertyManager propertyManager;
-	private ReceiveService receiveService;
-	private Collection<Stock> stocks;
+	private static Properties props = new Properties();
+	private File warPath;
+	private File webXmlPath;
 	
-	public PropertyManager getPropertyManager() {
-		return propertyManager;
+	private TradingDataService dataService;
+	
+
+	public void loadProperties() throws Exception {
+ 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		props.load(loader.getResourceAsStream(FILE_CONF));
+		File rootDir = new File(loader.getResource(DIR_CONFIG).toURI());
+		warPath = new File(rootDir, props.getProperty(KEY_PATH_WAR));
+		webXmlPath = new File(warPath, props.getProperty(KEY_WEB_XML));
+ 	}
+		
+	public TradingDataService getDataService() {
+		return dataService;
 	}
 
-	public void setPropertyManager(PropertyManager propertyManager) {
-		this.propertyManager = propertyManager;
-	}
-
-	public ReceiveService getReceiveService() {
-		return receiveService;
-	}
-
-	public void setReceiveService(ReceiveService receiveService) {
-		this.receiveService = receiveService;
+	public void setDataService(TradingDataService dataService) {
+		this.dataService = dataService;
 	}
 
 	private void loadStocks() throws Exception {
 		logger.info("Load in stocks");
-		 Map<String, List<String>> portMap = this.propertyManager.getPortfolio();
-		 stocks = receiveService.loadStocks(portMap);
-	}
-
-	private void scheduleQuartzJobs() throws Exception {
-		
-		logger.info("Schedule Quartz jobs");
-		JobDetail job1 = JobBuilder.newJob(WeekdayJob.class).withIdentity("Weekday Job", "trading group").build();
-		Trigger trigger1 = TriggerBuilder.newTrigger().withIdentity("Weekday Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(PropertyManager.getProperty(PropertyManager.QUARTZ_WEEKDAY_SCHEDULE))).build();
-		JobDetail job2 = JobBuilder.newJob(WeekdayJob.class).withIdentity("Weekend Job", "trading group").build();
-		Trigger trigger2 = TriggerBuilder.newTrigger().withIdentity("Weekend Trigger", "trading group").withSchedule(CronScheduleBuilder.cronSchedule(PropertyManager.getProperty(PropertyManager.QUARTZ_WEEKEND_SCHEDULE))).build();
-
-		Scheduler scheduler = new StdSchedulerFactory().getScheduler();
-		scheduler.start();
-		scheduler.scheduleJob(job1, trigger1);
-		scheduler.scheduleJob(job2, trigger2);
+		 dataService.loadStocks();
 	}
 
 	public void run() {
-		String serverName = PropertyManager.getProperty(PropertyManager.JETTY_SERVER_NAME);
-		int port = Integer.parseInt(PropertyManager.getProperty(PropertyManager.JETTY_SERVER_PORT));
+		String serverName = props.getProperty(KEY_SERVER_NAME);
+		int port = Integer.parseInt(props.getProperty(KEY_SERVER_PORT));
 		try {
 			logger.info("Starting " + serverName);
 
@@ -84,8 +70,8 @@ public class TradingServer implements Runnable {
 
 			WebAppContext webapp = new WebAppContext();
 			webapp.setContextPath(PATH_CONTEXT);
-			webapp.setWar(propertyManager.getWarPath().getAbsolutePath());
-			webapp.setDefaultsDescriptor(propertyManager.getWebXmlPath().getAbsolutePath());
+			webapp.setWar(warPath.getAbsolutePath());
+			webapp.setDefaultsDescriptor(webXmlPath.getAbsolutePath());
 			webapp.addServlet(new ServletHolder(new StatusServlet()), URL_STATUS);
 
 			/*
@@ -126,10 +112,8 @@ public class TradingServer implements Runnable {
 		
 		@SuppressWarnings("resource")
 		ApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
-		setPropertyManager((PropertyManager)context.getBean("propertyManager"));
-		setReceiveService((ReceiveService)context.getBean("receiveService"));
+		setDataService((TradingDataService)context.getBean("dataService"));
 		loadStocks();
-		scheduleQuartzJobs();
 	}
 
 	public static void main(String[] args) {

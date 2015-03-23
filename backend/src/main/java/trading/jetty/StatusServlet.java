@@ -1,4 +1,4 @@
-package trading.server;
+package trading.jetty;
 
 import java.io.IOException;
 import java.io.PrintWriter;
