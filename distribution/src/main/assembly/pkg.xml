@@ -28,6 +28,7 @@
 				<include>org.springframework:spring-core</include>
 				<include>org.springframework:spring-context</include>
 				<include>javax.mail:mail</include>
+				<include>javax.annotation:javax.annotation-api</include>								
 				<include>commons-lang:commons-lang:jar</include>
 				<include>commons-io:commons-io:jar</include>
 				<include>commons-net:commons-net:jar</include>

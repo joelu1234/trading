@@ -21,12 +21,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 
 import trading.domain.FundamentalData;
 import trading.domain.OptionData;
@@ -38,10 +39,6 @@ public class FileDaoImpl implements TradingDataDao{
 
 	private static Logger logger = Logger.getLogger(TradingDataDao.class);
 	
-	final public static String KEY_FILE_STATS = "data.stats.file";
-	final public static String KEY_FILE_QUOTES = "data.quote.file";
-	final public static String KEY_FILE_OPTIONS = "data.option.file";
-	
 	final public static String DIR_DATA = "stockdata";
 	final public static String DIR_PORTFOLIO = DIR_DATA+"/portfolio";
 	final public static String FILE_HOLIDAY = DIR_DATA+"/holidays.properties";
@@ -50,22 +47,19 @@ public class FileDaoImpl implements TradingDataDao{
 	private File quoteFile;
 	private File optionFile;
 	
+	@Value( "${data.stats.file}" )
 	private String statsFileName;
+	@Value( "${data.quote.file}" )
 	private String quoteFileName;
+	@Value( "${data.option.file}" )
 	private String optionFileName;
 	
 	private Map<String, List<String>> portfolio = new HashMap<String, List<String>>();
 	
 	private Set<Date> holidays = new HashSet<Date>();
-	
-	@Autowired
-	private Environment env;
 		
+	@PostConstruct
 	public void init() throws Exception {
-		
-		statsFileName=env.getProperty(KEY_FILE_STATS);
-		quoteFileName=env.getProperty(KEY_FILE_QUOTES);
-		optionFileName=env.getProperty(KEY_FILE_OPTIONS);
 		
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		File rootDir=(new File(loader.getResource(DIR_DATA).toURI()));

@@ -35,7 +35,7 @@ public class TradingServer implements Runnable {
 	private TradingDataService dataService;
 	
 
-	public void loadProperties() throws Exception {
+	private void loadProperties() throws Exception {
  		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		props.load(loader.getResourceAsStream(FILE_CONF));
 		File rootDir = new File(loader.getResource(DIR_CONFIG).toURI());
@@ -109,7 +109,7 @@ public class TradingServer implements Runnable {
 	}
 
 	private void init() throws Exception {
-		
+		loadProperties();
 		@SuppressWarnings("resource")
 		ApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
 		setDataService((TradingDataService)context.getBean("dataService"));
@@ -118,7 +118,6 @@ public class TradingServer implements Runnable {
 
 	public static void main(String[] args) {
 		TradingServer server = new TradingServer();
-		
 		try {
 			server.init();
 		} 

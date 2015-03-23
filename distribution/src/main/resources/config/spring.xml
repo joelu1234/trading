@@ -7,7 +7,9 @@
 	
 	<context:property-placeholder location="classpath:conf.properties" />
 
-	<bean id="dataDao" class="trading.dao.FileDaoImpl" init-method="init"/>
+    <context:annotation-config/>
+    
+	<bean id="dataDao" class="trading.dao.FileDaoImpl"/>
 
 	<bean id="dataService" class="trading.service.TradingDataServiceImpl">
 		<property name="dao" ref="dataDao" />
