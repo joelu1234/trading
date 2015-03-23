@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 
 import trading.domain.OptionData;
 import trading.domain.Stock;
+import trading.domain.StockType;
 import trading.util.Constants;
 
 public class YahooOptionReceiver {
@@ -82,19 +83,22 @@ public class YahooOptionReceiver {
 		sb.append(ticker);
 		sb.append("&&date=");
 		sb.append(getGMTSeconds(oeDate));
-		return sb.toString();
+		return String.format(url, ticker,getGMTSeconds(oeDate));
 
 	}
 
-	/*
 	public static void main(String[] args) throws Exception {
+		
+		
+		Date oeDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse("2015-04-17");
+		
 		Stock stock = new Stock();
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
 		stock.getFundamentalData().setOptionable(true);
-		fetch(stock,"http://finance.yahoo.com/q/op?s=");
+		fetch(stock, oeDate, "http://finance.yahoo.com/q/op?s=%s&&date=%s");
 		System.out.println(stock.getOptions());
 	}
-	*/
+	
 }

@@ -37,7 +37,7 @@ public class YahooAeReceiver {
 
 	public static void fetch(Stock stock, String url) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK && "USA".equalsIgnoreCase(stock.getFundamentalData().getCountry())) {
-			url = url + stock.getTicker();
+			url = String.format(url, stock.getTicker());
 			logger.debug("url=" + url);
 			Document doc = null;
 			try {
@@ -64,8 +64,9 @@ public class YahooAeReceiver {
 		Stock stock = new Stock();
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setCountry("USA");
 		stock.getFundamentalData().setExchange("[NYSE]");
-		fetch(stock,"http://finance.yahoo.com/q/ae?s=");
+		fetch(stock,"http://finance.yahoo.com/q/ae?s=%s");
 		System.out.println(stock);
 	}
 }

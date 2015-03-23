@@ -70,7 +70,7 @@ public class YahooStatsReceiver {
 
 	public static void fetch(Stock stock, String url) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
-			url =url + stock.getTicker();
+			url = String.format(url, stock.getTicker());
 			logger.debug("url=" + url);
 			Document doc = null;
 			try
@@ -94,7 +94,7 @@ public class YahooStatsReceiver {
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
-		fetch(stock,"http://finance.yahoo.com/q/ks?s=");
+		fetch(stock,"http://finance.yahoo.com/q/ks?s=%s");
 		System.out.println(stock);
 	}
 }

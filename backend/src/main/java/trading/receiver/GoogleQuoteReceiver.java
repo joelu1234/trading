@@ -172,19 +172,17 @@ public class GoogleQuoteReceiver {
 
 	// http://www.google.com/finance/historical?output=csv&q=AAPL&startdate=Feb+19%2C+2011&enddate=Feb+18%2C+2015
 	private static String getUrl(Stock stock, Date startDate, Date endDate, String url) {
-		StringBuilder sb = new StringBuilder(url);
+		StringBuilder sb = new StringBuilder();
 		if (stock.getFundamentalData().getExchange().contains("NASD")) {
 			sb.append("NASDAQ%3A");   
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
 			sb.append("NYSE%3A");
 		}
 		sb.append(stock.getTicker().replaceAll("-","\\."));
-		sb.append("&startdate=");
-		sb.append(new SimpleDateFormat(URL_DATE_FORMAT).format(startDate));
-		sb.append("&enddate=");
-		sb.append(new SimpleDateFormat(URL_DATE_FORMAT).format(endDate));
-		return sb.toString();
-
+		String ticker =sb.toString();
+		String strStartDate=new SimpleDateFormat(URL_DATE_FORMAT).format(startDate);
+		String strEndDate=new SimpleDateFormat(URL_DATE_FORMAT).format(endDate);
+		return String.format(url, ticker, strStartDate, strEndDate);
 	}
 
 	public static void main(String[] args) throws Exception {
@@ -194,7 +192,7 @@ public class GoogleQuoteReceiver {
 		// System.out.println(date+" "+date.getTime());
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		fetch(stock,"http://www.google.com/finance/historical?output=csv&q=");
-		System.out.println(stock);
+		fetch(stock,"http://www.google.com/finance/historical?output=csv&q=%s&startdate=%s&enddate=%s");
+		System.out.println(stock.getQuotes());
 	}
 }

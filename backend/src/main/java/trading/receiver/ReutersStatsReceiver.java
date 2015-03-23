@@ -39,14 +39,14 @@ public class ReutersStatsReceiver {
 	public static void fetch(Stock stock, String url) throws Exception {
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
 			String ticker = stock.getTicker().replace("-", ""); // BF-B changr to BFB
-			url = url + ticker;
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
-				url = url + ".O";
+				ticker = ticker + ".O";
 			}
 			else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
-				url = url + ".N";
+				ticker = ticker + ".N";
 			}
 			// NYSE/NASD
+			url=String.format(url, ticker);
 			logger.debug("url=" + url);
 			
 			Document doc = null;
@@ -69,7 +69,7 @@ public class ReutersStatsReceiver {
 		stock.setTicker("T");
 		stock.getFundamentalData().setStockType(StockType.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
-		fetch(stock,"http://www.reuters.com/finance/stocks/financialHighlights?symbol=");
+		fetch(stock,"http://www.reuters.com/finance/stocks/financialHighlights?symbol=%s");
 		System.out.println(stock);
 	}
 }

@@ -15,7 +15,7 @@ import trading.util.Constants;
 
 public class Stock {
 	private String ticker;
-	private FundamentalData FundamentalData = new FundamentalData();
+	private FundamentalData fundamentalData = new FundamentalData();
 	private List<OptionData> options = new ArrayList<OptionData>();
 	private List<Quote> quotes = new ArrayList<Quote>();
 
@@ -28,11 +28,11 @@ public class Stock {
 	}
 
 	public FundamentalData getFundamentalData() {
-		return FundamentalData;
+		return fundamentalData;
 	}
 
 	public void setFundamentalData(FundamentalData fundamentalData) {
-		FundamentalData = fundamentalData;
+		this.fundamentalData = fundamentalData;
 	}
 
 	public List<OptionData> getOptions() {

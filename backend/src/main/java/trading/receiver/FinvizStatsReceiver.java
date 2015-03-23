@@ -161,7 +161,7 @@ public class FinvizStatsReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-	    url = url + stock.getTicker();
+	    url = String.format(url,stock.getTicker());
 		logger.debug("url=" + url);
 		Document doc = null;
 		try
@@ -175,7 +175,8 @@ public class FinvizStatsReceiver {
 			doc = Jsoup.connect(url).get();
 		}
 		fetchSectorAndIndustry(doc, stock);
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+		if (stock.getFundamentalData().getStockType() == StockType.STOCK 
+				||stock.getFundamentalData().getStockType() == StockType.ETF) {
 			fetchSnapshot(doc, stock);
 			fetchAnalystOpinions(doc, stock);
 		}
@@ -183,9 +184,9 @@ public class FinvizStatsReceiver {
 
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
-		stock.setTicker("T");
+		stock.setTicker("IWM");
 		stock.getFundamentalData().setStockType(StockType.ETF);
-		fetch(stock,"http://finviz.com/quote.ashx?t=");
+		fetch(stock,"http://finviz.com/quote.ashx?t=%s");
 		System.out.println(stock);
 	}
 }

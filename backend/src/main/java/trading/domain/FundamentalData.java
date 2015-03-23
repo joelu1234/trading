@@ -6,7 +6,7 @@ import java.util.List;
 public class FundamentalData {
 
 	private String name;
-	private String exchange;
+	private String exchange="";
 	private String sector;
 	private String industry;
 	private String country;

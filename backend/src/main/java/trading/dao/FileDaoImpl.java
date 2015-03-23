@@ -43,8 +43,8 @@ public class FileDaoImpl implements TradingDataDao{
 	final public static String KEY_FILE_OPTIONS = "data.option.file";
 	
 	final public static String DIR_DATA = "stockdata";
-	final public static String DIR_PORTFOLIO = "portfolio";
-	final public static String FILE_HOLIDAY = "config/holidays.properties";
+	final public static String DIR_PORTFOLIO = DIR_DATA+"/portfolio";
+	final public static String FILE_HOLIDAY = DIR_DATA+"/holidays.properties";
 	
 	private File statsFile;
 	private File quoteFile;
