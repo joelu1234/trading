@@ -1,6 +1,7 @@
 package trading.service;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import trading.domain.Stock;
 
@@ -14,6 +15,10 @@ public interface TradingDataService {
 
 	void saveOptions() throws Exception;
 	
-	Collection<Stock> getStocks();
+	Map<String, Stock> getStocks();
+    
+	Map<String, List<String>> getPortfolio() throws Exception;
+	
+	Stock getStock(String ticker);
 
 }

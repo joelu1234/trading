@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -15,6 +14,7 @@ import trading.domain.AnalystOpinion;
 import trading.domain.Stock;
 import trading.domain.StockType;
 import trading.util.Constants;
+import trading.util.Utils;
 
 public class FinvizStatsReceiver {
 	private static Logger logger = Logger.getLogger(FinvizStatsReceiver.class);
@@ -163,17 +163,7 @@ public class FinvizStatsReceiver {
 	public static void fetch(Stock stock, String url) throws Exception {
 	    url = String.format(url,stock.getTicker());
 		logger.debug("url=" + url);
-		Document doc = null;
-		try
-		{
-			doc = Jsoup.connect(url).get();
-		}
-		catch(Exception ex)
-		{
-			logger.warn("http read error, retry", ex);
-			Thread.sleep(1000);
-			doc = Jsoup.connect(url).get();
-		}
+		Document doc = Utils.fetchJsoupDoc(url, 3);
 		fetchSectorAndIndustry(doc, stock);
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK 
 				||stock.getFundamentalData().getStockType() == StockType.ETF) {

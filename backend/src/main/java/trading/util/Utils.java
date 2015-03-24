@@ -4,13 +4,20 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 public class Utils {
+	
+	private static Logger logger = Logger.getLogger(Utils.class);
+	
 	private Utils() {
 	}
 
@@ -80,4 +87,35 @@ public class Utils {
 
 	}
 
+	public static Document fetchJsoupDoc(String url, int numRetry) throws Exception {
+		Document doc = null;
+		try {
+			doc = Jsoup.connect(url).get();
+		} catch (Exception ex) {
+			if (numRetry > 1) {
+				logger.warn("Fetch error, retry", ex);
+				Thread.sleep(2000);
+				doc = fetchJsoupDoc(url, --numRetry);
+			} else {
+				throw (ex);
+			}
+		}
+		return doc;
+	}
+	
+	public static BufferedReader getReaderFromUrl(String url, int numRetry) throws Exception {
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+		} catch (Exception ex) {
+			if (numRetry > 1) {
+				logger.warn("Fetch error, retry", ex);
+				Thread.sleep(2000);
+				in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+			} else {
+				throw (ex);
+			}
+		}
+		return in;
+	}
 }

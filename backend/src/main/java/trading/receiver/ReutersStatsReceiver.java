@@ -1,7 +1,6 @@
 package trading.receiver;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -9,6 +8,7 @@ import org.jsoup.select.Elements;
 import trading.domain.Stock;
 import trading.domain.StockType;
 import trading.util.Constants;
+import trading.util.Utils;
 
 public class ReutersStatsReceiver {
 	private static Logger logger = Logger.getLogger(ReutersStatsReceiver.class);
@@ -48,15 +48,7 @@ public class ReutersStatsReceiver {
 			// NYSE/NASD
 			url=String.format(url, ticker);
 			logger.debug("url=" + url);
-			
-			Document doc = null;
-			try {
-				doc = Jsoup.connect(url).get();
-			} catch (Exception ex) {
-				logger.warn("http read error, retry", ex);
-				Thread.sleep(1000);
-				doc = Jsoup.connect(url).get();
-			}
+			Document doc = Utils.fetchJsoupDoc(url, 3);
 			fetchSnapshot(doc, stock);
 		} else {
 			logger.debug(stock.getTicker() + " is not stock type");

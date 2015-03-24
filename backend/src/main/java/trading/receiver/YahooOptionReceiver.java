@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,6 +13,7 @@ import trading.domain.OptionData;
 import trading.domain.Stock;
 import trading.domain.StockType;
 import trading.util.Constants;
+import trading.util.Utils;
 
 public class YahooOptionReceiver {
 	private static Logger logger = Logger.getLogger(YahooOptionReceiver.class);
@@ -46,14 +46,7 @@ public class YahooOptionReceiver {
 		if (stock.getFundamentalData().isOptionable()) {
 			url = getUrl(stock.getTicker(), oeDate, url);
 			logger.debug("url=" + url);
-			Document doc = null;
-			try {
-				doc = Jsoup.connect(url).get();
-			} catch (Exception ex) {
-				logger.warn("http read error, retry", ex);
-				Thread.sleep(1000);
-				doc = Jsoup.connect(url).get();
-			}
+			Document doc = Utils.fetchJsoupDoc(url, 3);
 			fetchOptions(doc, stock);
 		} else {
 			logger.info(stock.getTicker() + " is not optionable");

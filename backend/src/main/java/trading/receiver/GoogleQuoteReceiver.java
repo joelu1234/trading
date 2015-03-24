@@ -1,8 +1,6 @@
 package trading.receiver;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,6 +13,7 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import trading.domain.Quote;
 import trading.domain.Stock;
+import trading.util.Utils;
 
 
 public class GoogleQuoteReceiver {
@@ -107,15 +106,7 @@ public class GoogleQuoteReceiver {
 		List<Quote> list = stock.getQuotes();
 		url = getUrl(stock, startDate, endDate, url);
 		logger.debug("url=" + url);
-		BufferedReader in = null;
-
-		try {
-			in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-		} catch (Throwable th) {
-			logger.warn("http read error, retry", th);
-			Thread.sleep(1000);
-			in = new BufferedReader(new InputStreamReader(new URL(url).openStream()));
-		}
+		BufferedReader in = Utils.getReaderFromUrl(url, 3);
 		CSVReader reader = null;
 		try {
 			reader = new CSVReader(in);

@@ -11,8 +11,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 
 import trading.dao.TradingDataDao;
 import trading.domain.Quote;
@@ -33,20 +32,24 @@ public class TradingDataServiceImpl implements TradingDataService {
 
 	private static final Logger logger = Logger.getLogger(TradingDataServiceImpl.class);
 	
-	final public static String KEY_FINVIZ_STATS = "trading.receiver.finviz.stats";
-	final public static String KEY_REUTERS_STATS = "trading.receiver.reuters.stats";
-	final public static String KEY_YAHOO_STATS = "trading.receiver.yahoo.stats";
-	final public static String KEY_YAHOO_AE = "trading.receiver.yahoo.ae";
-	final public static String KEY_YAHOO_OPTION = "trading.receiver.yahoo.option";
-	final public static String KEY_GOOGLE_OPTION = "trading.receiver.google.option";
-	final public static String KEY_GOOGLE_QUOTE = "trading.receiver.google.quote";
-	
-	@Autowired
-	private Environment env;
+	@Value( "${trading.receiver.finviz.stats}" )
+	private String finvizStatsUrl;
+	@Value( "${trading.receiver.reuters.stats}" )
+	private String reutersStatsUrl;	
+	@Value( "${trading.receiver.yahoo.stats}" )
+	private String yahooStatsUrl;		
+	@Value( "${trading.receiver.yahoo.ae}" )
+	private String yahooAeUrl;	
+	@Value( "${trading.receiver.yahoo.option}" )
+	private String yahooOptionUrl;		
+	@Value( "${trading.receiver.google.quote}" )
+	private String googleQuoteUrl;	
+	//@Value( "${trading.receiver.google.option}" )
+	//private String googleOptionUrl;		
 	
 	private TradingDataDao dao;
 
-	private Collection<Stock> stocks;
+	private Map<String, Stock> stocks; 
 
 	public TradingDataDao getDao() {
 		return dao;
@@ -56,22 +59,26 @@ public class TradingDataServiceImpl implements TradingDataService {
 		this.dao = dao;
 	}
 
-	public Collection<Stock> getStocks() {
+	public Map<String, Stock> getStocks() {
 		return stocks;
 	}
-
-	public void setStocks(Collection<Stock> stocks) {
-		this.stocks = stocks;
+	
+	public Stock getStock(String ticker){
+		return stocks.get(ticker);
+	}
+	
+	public Map<String, List<String>> getPortfolio() throws Exception{
+		return dao.getPortfolio();
 	}
 	
 	private List<Stock> fetchFundamentalData(Collection<Stock> stocks) {
 		List<Stock> failedStocks = new ArrayList<Stock>();
 		for (Stock stock : stocks) {
 			try {
-				FinvizStatsReceiver.fetch(stock, env.getProperty(KEY_FINVIZ_STATS));
-				ReutersStatsReceiver.fetch(stock, env.getProperty(KEY_REUTERS_STATS));
-				YahooStatsReceiver.fetch(stock, env.getProperty(KEY_YAHOO_STATS));
-				YahooAeReceiver.fetch(stock, env.getProperty(KEY_YAHOO_AE));
+				FinvizStatsReceiver.fetch(stock, finvizStatsUrl);
+				ReutersStatsReceiver.fetch(stock, reutersStatsUrl);
+				YahooStatsReceiver.fetch(stock, yahooStatsUrl);
+				YahooAeReceiver.fetch(stock, yahooAeUrl);
 			} catch (Throwable th) {
 				logger.error("Fetching Fundamemtal data error for " + stock.getTicker(), th);
 				failedStocks.add(stock);
@@ -84,7 +91,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		List<Stock> failedStocks = new ArrayList<Stock>();
 		for (Stock stock : stocks) {
 			try {
-				GoogleQuoteReceiver.fetch(stock, env.getProperty(KEY_GOOGLE_QUOTE));
+				GoogleQuoteReceiver.fetch(stock, googleQuoteUrl);
 			} catch (Throwable th) {
 				logger.error("Fetching quotes error for " + stock.getTicker(), th);
 				failedStocks.add(stock);
@@ -126,7 +133,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		Date oeDate = getNextMonthlyOEDate();
 		for (Stock stock : stocks) {
 			try {
-				YahooOptionReceiver.fetch(stock, oeDate, env.getProperty(KEY_YAHOO_OPTION));
+				YahooOptionReceiver.fetch(stock, oeDate, yahooOptionUrl);
 			} catch (Throwable th) {
 				logger.error("Fetching options error for " + stock.getTicker(), th);
 			}
@@ -176,7 +183,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 			}
 		}
 		logger.debug("Save stock stats");
-		saveStats();
+		dao.saveStats(stockMap.values());
 
 		logger.debug("Fetch stock quotes");
 		tempList.clear();
@@ -187,7 +194,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		}
 		fetchQuotes(tempList);
 		logger.debug("Save stock quotes");
-		saveQuotes();
+		dao.saveQuotes(stockMap.values());
 
 		logger.debug("Fetch stock options");
 		tempList.clear();
@@ -199,21 +206,21 @@ public class TradingDataServiceImpl implements TradingDataService {
 		this.fetchOptionData(tempList);
 
 		logger.debug("Save stock options");
-		saveOptions();
+		dao.saveOptions(stockMap.values());
 
-		this.stocks = stockMap.values();
+		this.stocks = stockMap;
 	}
 
 	public void saveStats() throws Exception {
-		dao.saveStats(stocks);
+		dao.saveStats(stocks.values());
 	}
 
 	public void saveQuotes() throws Exception {
-		dao.saveQuotes(stocks);
+		dao.saveQuotes(stocks.values());
 	}
 
 	public void saveOptions() throws Exception {
-		dao.saveOptions(stocks);
+		dao.saveOptions(stocks.values());
 	}
 	
 	private boolean isHoliday(Date date) throws Exception {
