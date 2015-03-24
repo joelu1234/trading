@@ -4,11 +4,10 @@ import java.io.File;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
-import org.mortbay.jetty.*;
-import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.servlet.ServletHolder;
-import org.mortbay.jetty.webapp.WebAppContext;
-import org.mortbay.thread.QueuedThreadPool;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -50,43 +49,18 @@ public class TradingServer implements Runnable {
 			logger.info("Starting " + serverName);
 
 			Server server = new Server();
-			Connector connector = new SelectChannelConnector();
+			ServerConnector connector = new ServerConnector(server);
 			connector.setPort(port);
 			server.setConnectors(new Connector[] { connector });
 			server.setStopAtShutdown(true);
+			
+			WebAppContext context = new WebAppContext();
+			context.setContextPath(PATH_CONTEXT);
+			context.setWar(warPath.getAbsolutePath());
+			context.setDefaultsDescriptor(webXmlPath.getAbsolutePath());
 
-			WebAppContext webapp = new WebAppContext();
-			webapp.setContextPath(PATH_CONTEXT);
-			webapp.setWar(warPath.getAbsolutePath());
-			webapp.setDefaultsDescriptor(webXmlPath.getAbsolutePath());
-			webapp.addServlet(new ServletHolder(new StatusServlet()), URL_STATUS);
-
-			/*
-			 * webapp.addServlet(new ServletHolder(new ListServlet()),
-			 * URL_LIST); webapp.addServlet(new ServletHolder(new
-			 * ExecServlet(fpBinMap)), URL_EXEC); webapp.addServlet(new
-			 * ServletHolder(new StatusServlet()), URL_STATUS);
-			 * webapp.addServlet(new ServletHolder(new
-			 * DownloadServlet(fpHomeMap)), URL_DOWNLOAD);
-			 */
-			server.setHandlers(new Handler[] { webapp });
-
-			QueuedThreadPool queuedThreadPool = new QueuedThreadPool(5);
-			queuedThreadPool.setMinThreads(1);
-			server.setThreadPool(queuedThreadPool);
+			server.setHandler(context);
 			server.start();
-			/*
-			 * if (logger.isInfoEnabled()) { logger.info(serverName +
-			 * " started, url: http://" +
-			 * InetAddress.getLocalHost().getHostName() + ":" + port +
-			 * URL_STATUS); logger.info(serverName + " started, url: http://" +
-			 * InetAddress.getLocalHost().getHostName() + ":" + port +
-			 * URL_LIST); logger.info(serverName + " started, url: http://" +
-			 * InetAddress.getLocalHost().getHostName() + ":" + port +
-			 * URL_EXEC); logger.info(serverName + " started, url: http://" +
-			 * InetAddress.getLocalHost().getHostName() + ":" + port +
-			 * URL_DOWNLOAD); }
-			 */
 			server.join();
 		} catch (Throwable th) {
 			String error = serverName + " web server exception, server is down.";
