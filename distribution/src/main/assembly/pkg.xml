@@ -16,38 +16,6 @@
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
-			<useProjectArtifact>false</useProjectArtifact>
-			<includes>
-				<include>org.springframework:spring-aspects</include>
-				<include>org.springframework:spring-context-support</include>
-				<include>org.springframework:spring-tx</include>
-				<include>org.springframework:spring-aop</include>
-				<include>org.springframework:spring-webmvc</include>
-				<include>org.springframework:spring-web</include>
-				<include>org.springframework:spring-beans</include>
-				<include>org.springframework:spring-core</include>
-				<include>org.springframework:spring-context</include>
-				<include>org.springframework:spring-expression</include>				
-				<include>javax.mail:mail</include>
-				<include>javax.annotation:javax.annotation-api</include>								
-				<include>commons-lang:commons-lang:jar</include>
-				<include>commons-io:commons-io:jar</include>
-				<include>commons-net:commons-net:jar</include>
-				<include>commons-logging:commons-logging:jar</include>								
-				<include>org.apache.ibatis:ibatis-sqlmap:jar</include>
-				<include>net.sf.opencsv:opencsv:jar</include>
-				<include>org.codehaus.jackson:jackson-core-asl:jar</include>
-				<include>org.codehaus.jackson:jackson-mapper-asl:jar</include>
-				<include>log4j:log4j:jar</include>
-				<include>org.quartz-scheduler:quartz:jar</include>
-				<include>org.jsoup:jsoup:jar</include>
-				<include>org.mortbay.jetty:jetty:jar</include>
-				<include>org.mortbay.jetty:jetty-util:jar</include>
-				<include>org.slf4j:slf4j-api:jar</include>
-				<include>org.slf4j:slf4j-log4j12:jar</include>
-				<include>javax.servlet:javax.servlet-api:jar</include>
-				<include>trading:backend:jar</include>
-			</includes>
 			<unpack>false</unpack>
 			<outputDirectory>lib</outputDirectory>
 		</dependencySet>
