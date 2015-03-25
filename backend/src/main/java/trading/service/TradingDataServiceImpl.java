@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,25 +32,25 @@ import trading.receiver.YahooStatsReceiver;
 public class TradingDataServiceImpl implements TradingDataService {
 
 	private static final Logger logger = Logger.getLogger(TradingDataServiceImpl.class);
-	
-	@Value( "${trading.receiver.finviz.stats}" )
+
+	@Value("${trading.receiver.finviz.stats}")
 	private String finvizStatsUrl;
-	@Value( "${trading.receiver.reuters.stats}" )
-	private String reutersStatsUrl;	
-	@Value( "${trading.receiver.yahoo.stats}" )
-	private String yahooStatsUrl;		
-	@Value( "${trading.receiver.yahoo.ae}" )
-	private String yahooAeUrl;	
-	@Value( "${trading.receiver.yahoo.option}" )
-	private String yahooOptionUrl;		
-	@Value( "${trading.receiver.google.quote}" )
-	private String googleQuoteUrl;	
-	//@Value( "${trading.receiver.google.option}" )
-	//private String googleOptionUrl;		
-	
+	@Value("${trading.receiver.reuters.stats}")
+	private String reutersStatsUrl;
+	@Value("${trading.receiver.yahoo.stats}")
+	private String yahooStatsUrl;
+	@Value("${trading.receiver.yahoo.ae}")
+	private String yahooAeUrl;
+	@Value("${trading.receiver.yahoo.option}")
+	private String yahooOptionUrl;
+	@Value("${trading.receiver.google.quote}")
+	private String googleQuoteUrl;
+	// @Value( "${trading.receiver.google.option}" )
+	// private String googleOptionUrl;
+
 	private TradingDataDao dao;
 
-	private Map<String, Stock> stocks; 
+	private Map<String, Stock> stocks = new HashMap<String, Stock>();
 
 	public TradingDataDao getDao() {
 		return dao;
@@ -62,15 +63,15 @@ public class TradingDataServiceImpl implements TradingDataService {
 	public Map<String, Stock> getStocks() {
 		return stocks;
 	}
-	
-	public Stock getStock(String ticker){
+
+	public Stock getStock(String ticker) {
 		return stocks.get(ticker);
 	}
-	
-	public Map<String, List<String>> getPortfolio() throws Exception{
+
+	public Map<String, List<String>> getPortfolio() throws Exception {
 		return dao.getPortfolio();
 	}
-	
+
 	private List<Stock> fetchFundamentalData(Collection<Stock> stocks) {
 		List<Stock> failedStocks = new ArrayList<Stock>();
 		for (Stock stock : stocks) {
@@ -107,8 +108,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		return failedStocks;
 	}
 
-	
-    private Date getNextMonthlyOEDate() throws Exception {
+	private Date getNextMonthlyOEDate() throws Exception {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
 		cal.set(Calendar.DAY_OF_WEEK_IN_MONTH, 3);
@@ -128,7 +128,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		}
 		return cal.getTime();
 	}
-	
+
 	private void fetchOptionData(Collection<Stock> stocks) throws Exception {
 		Date oeDate = getNextMonthlyOEDate();
 		for (Stock stock : stocks) {
@@ -141,19 +141,21 @@ public class TradingDataServiceImpl implements TradingDataService {
 	}
 
 	public void loadStocks() throws Exception {
-		
+
 		Map<String, List<String>> portMap = dao.getPortfolio();
-		Map<String, Stock> stockMap = dao.loadStocks();
-		logger.debug("Existing stock #: " + stockMap.size());
+		if (this.stocks.size() == 0){
+			stocks = dao.loadStocks();
+		}
+		logger.debug("Existing stock #: " + stocks.size());
 		Set<String> addedStocks = new HashSet<String>(portMap.keySet());
-		Set<String> removedStocks = new HashSet<String>(stockMap.keySet());
+		Set<String> removedStocks = new HashSet<String>(stocks.keySet());
 		// these are new adds
-		addedStocks.removeAll(stockMap.keySet());
+		addedStocks.removeAll(stocks.keySet());
 		// these are removed
 		removedStocks.removeAll(portMap.keySet());
 
 		for (String str : removedStocks) {
-			stockMap.remove(str);
+			stocks.remove(str);
 		}
 		logger.debug("Removed stocks: " + removedStocks);
 		logger.debug("Added stocks: " + addedStocks);
@@ -166,11 +168,17 @@ public class TradingDataServiceImpl implements TradingDataService {
 				stock.getFundamentalData().setIndices(indices);
 				if (StockType.ETF.toString().equalsIgnoreCase(indices.get(0))) {
 					stock.getFundamentalData().setStockType(StockType.ETF);
-				} else {
+				} else if(StockType.VIX.toString().equalsIgnoreCase(indices.get(0))){
+					stock.getFundamentalData().setStockType(StockType.VIX);
+					stock.getFundamentalData().setCountry("USA");
+					stock.getFundamentalData().setName("VOLATILITY S&P 500");
+					stock.getFundamentalData().setExchange("CBOE");
+					stock.getFundamentalData().setOptionable(true);
+				}else {
 					stock.getFundamentalData().setStockType(StockType.STOCK);
 				}
 			}
-			stockMap.put(str, stock);
+			stocks.put(str, stock);
 			tempList.add(stock);
 		}
 
@@ -178,27 +186,27 @@ public class TradingDataServiceImpl implements TradingDataService {
 			logger.debug("Fetch stock stats");
 			List<Stock> failedStocks = fetchFundamentalData(tempList);
 			for (Stock stock : failedStocks) {
-				stockMap.remove(stock.getTicker());
+				stocks.remove(stock.getTicker());
 				tempList.remove(stock);
 			}
 		}
 		logger.debug("Save stock stats");
-		dao.saveStats(stockMap.values());
+		dao.saveStats(stocks.values());
 
 		logger.debug("Fetch stock quotes");
 		tempList.clear();
-		for (Stock stock : stockMap.values()) {
+		for (Stock stock : stocks.values()) {
 			if (stock.getQuotes().size() == 0) {
 				tempList.add(stock);
 			}
 		}
 		fetchQuotes(tempList);
 		logger.debug("Save stock quotes");
-		dao.saveQuotes(stockMap.values());
+		dao.saveQuotes(stocks.values());
 
 		logger.debug("Fetch stock options");
 		tempList.clear();
-		for (Stock stock : stockMap.values()) {
+		for (Stock stock : stocks.values()) {
 			if (stock.getOptions().size() == 0) {
 				tempList.add(stock);
 			}
@@ -206,9 +214,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		this.fetchOptionData(tempList);
 
 		logger.debug("Save stock options");
-		dao.saveOptions(stockMap.values());
-
-		this.stocks = stockMap;
+		dao.saveOptions(stocks.values());
 	}
 
 	public void saveStats() throws Exception {
@@ -222,11 +228,10 @@ public class TradingDataServiceImpl implements TradingDataService {
 	public void saveOptions() throws Exception {
 		dao.saveOptions(stocks.values());
 	}
-	
+
 	private boolean isHoliday(Date date) throws Exception {
 		Set<Date> holidays = dao.getHolidays();
 		return holidays != null && holidays.contains(DateUtils.truncate(date, Calendar.DATE));
 	}
-
 
 }

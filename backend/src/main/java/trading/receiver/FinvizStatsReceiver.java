@@ -161,12 +161,12 @@ public class FinvizStatsReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-	    url = String.format(url,stock.getTicker());
-		logger.debug("url=" + url);
-		Document doc = Utils.fetchJsoupDoc(url, 3);
-		fetchSectorAndIndustry(doc, stock);
 		if (stock.getFundamentalData().getStockType() == StockType.STOCK 
 				||stock.getFundamentalData().getStockType() == StockType.ETF) {
+		    url = String.format(url,stock.getTicker());
+			logger.debug("url=" + url);
+			Document doc = Utils.fetchJsoupDoc(url, 3);
+			fetchSectorAndIndustry(doc, stock);
 			fetchSnapshot(doc, stock);
 			fetchAnalystOpinions(doc, stock);
 		}

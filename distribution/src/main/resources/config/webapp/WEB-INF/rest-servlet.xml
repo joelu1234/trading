@@ -12,7 +12,7 @@ http://www.springframework.org/schema/mvc http://www.springframework.org/schema/
 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
 
-    <context:component-scan base-package="trading.webmvc"/>
+    <context:component-scan base-package="trading"/>
     <mvc:annotation-driven/>
 
 </beans>

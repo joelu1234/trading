@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import trading.domain.Quote;
 import trading.domain.Stock;
+import trading.domain.StockType;
 import trading.util.Utils;
 
 
@@ -64,9 +65,11 @@ public class GoogleQuoteReceiver {
 		if (!"-".equals(strs[5]) && !"0".equals(strs[5])) {
 			q.setVolume(Long.parseLong(strs[5]));
 		} else {
-			valid = false;
 			if (prevQ != null) {
 				q.setVolume(prevQ.getVolume());
+			}
+			else{
+				q.setVolume(0); //VIX				
 			}
 		}
 
@@ -168,6 +171,9 @@ public class GoogleQuoteReceiver {
 			sb.append("NASDAQ%3A");   
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
 			sb.append("NYSE%3A");
+		}
+		else if (stock.getFundamentalData().getStockType()==StockType.VIX) {
+			sb.append("INDEXCBOE%3A");
 		}
 		sb.append(stock.getTicker().replaceAll("-","\\."));
 		String ticker =sb.toString();
