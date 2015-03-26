@@ -31,6 +31,7 @@ import trading.receiver.YahooAeReceiver;
 import trading.receiver.YahooOptionReceiver;
 import trading.receiver.YahooQuoteReceiver;
 import trading.receiver.YahooStatsReceiver;
+import trading.util.Constants;
 import trading.util.Utils;
 
 public class TradingDataServiceImpl implements TradingDataService {
@@ -56,8 +57,8 @@ public class TradingDataServiceImpl implements TradingDataService {
 
 	private TradingDataDao dao;
 	private Map<String, Stock> stocks = new HashMap<String, Stock>();
-    private Map<String, Map<String,Set<String>>> categories = new TreeMap<String, Map<String,Set<String>>>();
-	
+	private Map<String, Map<String, Set<String>>> categories = new TreeMap<String, Map<String, Set<String>>>();
+
 	public TradingDataDao getDao() {
 		return dao;
 	}
@@ -115,8 +116,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 				MovingAverage.calcSimpleMA(quotes, 50);
 				MovingAverage.calcSimpleMA(quotes, 100);
 				RSI.calcRSI(quotes);
-			}
-			else{
+			} else {
 				try {
 					YahooQuoteReceiver.fetch(stock, yahooQuoteUrl);
 				} catch (Throwable th) {
@@ -160,55 +160,54 @@ public class TradingDataServiceImpl implements TradingDataService {
 		}
 	}
 
-	private void createCategories()
-	{
-		Map<String, Map<String,Set<String>>> map = new TreeMap<String, Map<String,Set<String>>>();
-		for(Stock stock : stocks.values()){
-			String sector=stock.getFundamentalData().getSector();
-			String indu=stock.getFundamentalData().getIndustry();
-			Map<String,Set<String>> subMap=map.get(sector);
-			if(subMap==null){
-				subMap = new TreeMap<String,Set<String>>();
+	private void createCategories() {
+		Map<String, Map<String, Set<String>>> map = new TreeMap<String, Map<String, Set<String>>>();
+		for (Stock stock : stocks.values()) {
+			String sector = stock.getFundamentalData().getSector();
+			String indu = stock.getFundamentalData().getIndustry();
+			Map<String, Set<String>> subMap = map.get(sector);
+			if (subMap == null) {
+				subMap = new TreeMap<String, Set<String>>();
 				map.put(sector, subMap);
 			}
-			Set<String> set=subMap.get(indu);
-			if(set==null){
-				set= new TreeSet<String>();
+			Set<String> set = subMap.get(indu);
+			if (set == null) {
+				set = new TreeSet<String>();
 				subMap.put(indu, set);
 			}
-			set.add(stock.getTicker());	
+			set.add(stock.getTicker());
 		}
-		this.categories=map;
+		this.categories = map;
 	}
-	
+
 	public Stock reload(String ticker) throws Exception {
 		Stock stock = getStock(ticker);
-		if(stock==null){
-			throw new Exception("Invalid ticker "+ticker);
+		if (stock == null) {
+			throw new Exception("Invalid ticker " + ticker);
 		}
-		
+
 		ArrayList<Stock> tempList = new ArrayList<Stock>();
 		tempList.add(stock);
-		logger.debug("Fetch stock stats for "+ticker);
+		logger.debug("Fetch stock stats for " + ticker);
 		List<Stock> failedStocks = fetchFundamentalData(tempList);
-        if(failedStocks.size()>0){
-			throw new Exception("Unable to fetch stats, ticker "+ticker);
+		if (failedStocks.size() > 0) {
+			throw new Exception("Unable to fetch stats, ticker " + ticker);
 		}
 		logger.debug("Save stock stats");
 		dao.saveStats(stocks.values());
 
-		logger.debug("Fetch stock quotes for "+ticker);
+		logger.debug("Fetch stock quotes for " + ticker);
 		fetchQuotes(tempList);
 		logger.debug("Save stock quotes");
 		dao.saveQuotes(stocks.values());
-		logger.debug("Fetch stock options for "+ ticker);
+		logger.debug("Fetch stock options for " + ticker);
 		fetchOptionData(tempList);
 		logger.debug("Save stock options");
-		dao.saveOptions(stocks.values());	
+		dao.saveOptions(stocks.values());
 		return stock;
 	}
 	
-	public void loadStocks() throws Exception {
+	public void loadStocks(int loadType) throws Exception {
 
 		Map<String, List<String>> portMap = dao.getPortfolio();
 		if (this.stocks.size() == 0) {
@@ -227,7 +226,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 		}
 		logger.debug("Removed stocks: " + removedStocks);
 		logger.debug("Added stocks: " + addedStocks);
-		ArrayList<Stock> tempList = new ArrayList<Stock>();
+		Collection<Stock> tempList = new ArrayList<Stock>();
 		for (String str : addedStocks) {
 			Stock stock = new Stock();
 			stock.setTicker(str);
@@ -246,40 +245,48 @@ public class TradingDataServiceImpl implements TradingDataService {
 			stocks.put(str, stock);
 			tempList.add(stock);
 		}
+		
+		if(loadType==Constants.LOAD_TYPE_STATS){
+			tempList=stocks.values();
+		}
 
 		if (tempList.size() > 0) {
 			logger.debug("Fetch stock stats");
 			List<Stock> failedStocks = fetchFundamentalData(tempList);
-			for (Stock stock : failedStocks) {
-				stocks.remove(stock.getTicker());
-				tempList.remove(stock);
+			if(loadType==Constants.LOAD_TYPE_STARTUP){
+				for (Stock stock : failedStocks) {
+					stocks.remove(stock.getTicker());
+				}
+				logger.debug("Save stock stats");
+				dao.saveStats(stocks.values());
 			}
 		}
-		logger.debug("Save stock stats");
-		dao.saveStats(stocks.values());
 
-		logger.debug("Fetch stock quotes");
 		tempList.clear();
 		for (Stock stock : stocks.values()) {
-			if (stock.getQuotes().size() == 0) {
+			if (stock.getQuotes().size() == 0 || loadType==Constants.LOAD_TYPE_QUOTES) {
 				tempList.add(stock);
 			}
 		}
-		fetchQuotes(tempList);
-		logger.debug("Save stock quotes");
-		dao.saveQuotes(stocks.values());
+		if (tempList.size() > 0) {
+			logger.debug("Fetch stock quotes");
+			fetchQuotes(tempList);
+			logger.debug("Save stock quotes");
+			dao.saveQuotes(stocks.values());
+		}
 
-		logger.debug("Fetch stock options");
 		tempList.clear();
 		for (Stock stock : stocks.values()) {
-			if (stock.getOptions().size() == 0) {
+			if (stock.getOptions().size() == 0 || loadType==Constants.LOAD_TYPE_QUOTES) {
 				tempList.add(stock);
 			}
 		}
-		this.fetchOptionData(tempList);
-
-		logger.debug("Save stock options");
-		dao.saveOptions(stocks.values());
+		if (tempList.size() > 0) {
+			logger.debug("Fetch stock options");
+			fetchOptionData(tempList);
+			logger.debug("Save stock options");
+			dao.saveOptions(stocks.values());
+		}
 		createCategories();
 	}
 

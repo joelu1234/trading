@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import trading.service.TradingDataService;
+import trading.util.Constants;
 
 public final class InitListener implements ServletContextListener {
 
@@ -32,7 +33,7 @@ public final class InitListener implements ServletContextListener {
 			ApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(this.context);
 			TradingDataService dataService = (TradingDataService) springContext.getBean("dataService");
 			logger.info("Load in stocks");
-			dataService.loadStocks();
+			dataService.loadStocks(Constants.LOAD_TYPE_STARTUP);
 		} catch (Throwable e) {
 			logger.error("Inside contextInitialized", e);
 		}

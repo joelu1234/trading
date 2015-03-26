@@ -8,7 +8,7 @@ import trading.domain.Stock;
 
 public interface TradingDataService {
 
-	void loadStocks() throws Exception;
+	void loadStocks(int loadType) throws Exception;
 
 	void saveStats() throws Exception;
 

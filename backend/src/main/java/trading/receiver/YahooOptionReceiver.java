@@ -44,7 +44,11 @@ public class YahooOptionReceiver {
 
 	public static void fetch(Stock stock, Date oeDate, String url) throws Exception {
 		if (stock.getFundamentalData().isOptionable()) {
-			url = getUrl(stock.getTicker(), oeDate, url);
+			String ticker=stock.getTicker();
+			if (stock.getFundamentalData().getStockType()==StockType.VIX) {
+				ticker="%5E"+ticker;
+			} 
+			url = String.format(url, ticker,getGMTSeconds(oeDate));
 			logger.debug("url=" + url);
 			Document doc = Utils.fetchJsoupDoc(url, 3);
 			fetchOptions(doc, stock);
@@ -67,17 +71,6 @@ public class YahooOptionReceiver {
 		calGMT.set(Calendar.MONTH, calET.get(Calendar.MONTH));
 		calGMT.set(Calendar.DATE, calET.get(Calendar.DATE));
 		return calGMT.getTimeInMillis() / 1000;
-	}
-
-	// http://finance.yahoo.com/q/op?s=AAPL&date=1424390400 time is seconds in
-	// GMT
-	private static String getUrl(String ticker, Date oeDate, String url) {
-		StringBuilder sb = new StringBuilder(url);
-		sb.append(ticker);
-		sb.append("&&date=");
-		sb.append(getGMTSeconds(oeDate));
-		return String.format(url, ticker,getGMTSeconds(oeDate));
-
 	}
 
 	public static void main(String[] args) throws Exception {
