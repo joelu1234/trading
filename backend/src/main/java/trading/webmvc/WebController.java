@@ -12,16 +12,17 @@ import trading.service.TradingDataService;
 @RestController
 public class WebController {
 
-	@Autowired
-	private TradingDataService dataService;
+//      @Autowired
+	//  private TradingDataService dataService;
 
 	@RequestMapping(value = "/status", method = RequestMethod.GET)
 	public String status() {
 		return "Hello World!";
 	}
 
-	@RequestMapping(value = "/{ticker}", method = RequestMethod.GET)
-	public Stock getStock(@PathVariable("tocket") String ticker) {
-		return dataService.getStock(ticker);
-	}
+	//@RequestMapping(value = "fetch/{ticker}", method = RequestMethod.GET)
+	//public Stock getStock(@PathVariable("ticker") String ticker) {
+	//	return dataService.getStock(ticker);
+	//}
+	
 }
