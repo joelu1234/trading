@@ -7,11 +7,7 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import trading.service.TradingDataService;
+import org.eclipse.jetty.webapp.WebAppContext;;
 
 public class TradingServer implements Runnable {
 	private static final Logger logger = Logger.getLogger(TradingServer.class);
@@ -31,9 +27,6 @@ public class TradingServer implements Runnable {
 	private File warPath;
 	private File webXmlPath;
 	
-	private TradingDataService dataService;
-	
-
 	private void loadProperties() throws Exception {
  		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		props.load(loader.getResourceAsStream(FILE_CONF));
@@ -68,20 +61,11 @@ public class TradingServer implements Runnable {
 			System.exit(1);
 		}
 	}
-
-	private void init() throws Exception {
-		loadProperties();
-		@SuppressWarnings("resource")
-		ApplicationContext context = new ClassPathXmlApplicationContext("spring.xml");
-		dataService =(TradingDataService)context.getBean("dataService");
-		logger.info("Load in stocks");
-		dataService.loadStocks();
-	}
-
+	
 	public static void main(String[] args) {
 		TradingServer server = new TradingServer();
 		try {
-			server.init();
+			server.loadProperties();
 		} 
 		catch (Throwable th) 
 		{

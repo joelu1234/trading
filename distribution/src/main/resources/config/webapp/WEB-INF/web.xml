@@ -8,10 +8,26 @@
     	Default web.xml file.  
     	This file is applied to a Web application before it's own WEB_INF/web.xml file
   	</description>
+  	
+  	 <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+			classpath:spring.xml
+        </param-value>
+    </context-param>
+  	
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>trading.listener.InitListener</listener-class>
+    </listener>
+  	
 	<servlet>
 		<servlet-name>rest</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<load-on-startup>2</load-on-startup>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
