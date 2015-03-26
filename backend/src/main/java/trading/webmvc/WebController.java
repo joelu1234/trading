@@ -12,8 +12,8 @@ import trading.service.TradingDataService;
 @RestController
 public class WebController {
 
-      @Autowired
-	  private TradingDataService dataService;
+	@Autowired
+	private TradingDataService dataService;
 
 	@RequestMapping(value = "/status", method = RequestMethod.GET)
 	public String status() {
@@ -22,7 +22,8 @@ public class WebController {
 
 	@RequestMapping(value = "fetch/{ticker}", method = RequestMethod.GET)
 	public Stock getStock(@PathVariable("ticker") String ticker) {
-		return dataService.getStock(ticker);
+
+		Stock stock = dataService.getStock(ticker.toUpperCase());
+		return stock;
 	}
-	
 }
