@@ -2,11 +2,10 @@ package trading.domain;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import trading.util.Constants;
+import trading.util.CustomObjectMapper;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -52,9 +51,7 @@ public class Stock {
 	}
 
 	private static ObjectMapper getObjectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-		return mapper;
+		return new CustomObjectMapper();
 	}
 
 	@Override

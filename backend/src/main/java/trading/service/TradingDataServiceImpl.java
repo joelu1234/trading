@@ -27,7 +27,9 @@ import trading.receiver.GoogleQuoteReceiver;
 import trading.receiver.ReutersStatsReceiver;
 import trading.receiver.YahooAeReceiver;
 import trading.receiver.YahooOptionReceiver;
+import trading.receiver.YahooQuoteReceiver;
 import trading.receiver.YahooStatsReceiver;
+import trading.util.Utils;
 
 public class TradingDataServiceImpl implements TradingDataService {
 
@@ -45,6 +47,8 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private String yahooOptionUrl;
 	@Value("${trading.receiver.google.quote}")
 	private String googleQuoteUrl;
+	@Value("${trading.receiver.yahoo.quote}")
+	private String yahooQuoteUrl;
 	// @Value( "${trading.receiver.google.option}" )
 	// private String googleOptionUrl;
 
@@ -91,19 +95,29 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private List<Stock> fetchQuotes(Collection<Stock> stocks) {
 		List<Stock> failedStocks = new ArrayList<Stock>();
 		for (Stock stock : stocks) {
-			try {
-				GoogleQuoteReceiver.fetch(stock, googleQuoteUrl);
-			} catch (Throwable th) {
-				logger.error("Fetching quotes error for " + stock.getTicker(), th);
-				failedStocks.add(stock);
+			if (stock.getFundamentalData().getStockType() != StockType.VIX) {
+				try {
+					GoogleQuoteReceiver.fetch(stock, googleQuoteUrl);
+				} catch (Throwable th) {
+					logger.error("Fetching quotes error for " + stock.getTicker(), th);
+					failedStocks.add(stock);
+				}
+				List<Quote> quotes = stock.getQuotes();
+				BollingerBands.calcBands(quotes);
+				K.calcK(quotes);
+				MovingAverage.calcSimpleMA(quotes, 13);
+				MovingAverage.calcSimpleMA(quotes, 50);
+				MovingAverage.calcSimpleMA(quotes, 100);
+				RSI.calcRSI(quotes);
 			}
-			List<Quote> quotes = stock.getQuotes();
-			BollingerBands.calcBands(quotes);
-			K.calcK(quotes);
-			MovingAverage.calcSimpleMA(quotes, 13);
-			MovingAverage.calcSimpleMA(quotes, 50);
-			MovingAverage.calcSimpleMA(quotes, 100);
-			RSI.calcRSI(quotes);
+			else{
+				try {
+					YahooQuoteReceiver.fetch(stock, yahooQuoteUrl);
+				} catch (Throwable th) {
+					logger.error("Fetching quotes error for " + stock.getTicker(), th);
+					failedStocks.add(stock);
+				}
+			}
 		}
 		return failedStocks;
 	}
@@ -143,7 +157,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 	public void loadStocks() throws Exception {
 
 		Map<String, List<String>> portMap = dao.getPortfolio();
-		if (this.stocks.size() == 0){
+		if (this.stocks.size() == 0) {
 			stocks = dao.loadStocks();
 		}
 		logger.debug("Existing stock #: " + stocks.size());
@@ -168,13 +182,10 @@ public class TradingDataServiceImpl implements TradingDataService {
 				stock.getFundamentalData().setIndices(indices);
 				if (StockType.ETF.toString().equalsIgnoreCase(indices.get(0))) {
 					stock.getFundamentalData().setStockType(StockType.ETF);
-				} else if(StockType.VIX.toString().equalsIgnoreCase(indices.get(0))){
-					stock.getFundamentalData().setStockType(StockType.VIX);
-					stock.getFundamentalData().setCountry("USA");
-					stock.getFundamentalData().setName("VOLATILITY S&P 500");
-					stock.getFundamentalData().setExchange("CBOE");
-					stock.getFundamentalData().setOptionable(true);
-				}else {
+				} else if (StockType.VIX.toString().equalsIgnoreCase(indices.get(0))) {
+					Utils.createVIXStats(stock);
+
+				} else {
 					stock.getFundamentalData().setStockType(StockType.STOCK);
 				}
 			}

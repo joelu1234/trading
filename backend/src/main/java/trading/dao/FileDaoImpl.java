@@ -35,6 +35,7 @@ import trading.domain.OptionData;
 import trading.domain.Quote;
 import trading.domain.Stock;
 import trading.util.Constants;
+import trading.util.CustomObjectMapper;
 
 public class FileDaoImpl implements TradingDataDao{
 
@@ -203,9 +204,7 @@ public class FileDaoImpl implements TradingDataDao{
 	}
 
 	private static ObjectMapper getObjectMapper() {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setDateFormat(new SimpleDateFormat(Constants.DATE_FORMAT));
-		return mapper;
+		return new CustomObjectMapper();
 	}
 
 	public Map<String, List<String>> getPortfolio() throws Exception {

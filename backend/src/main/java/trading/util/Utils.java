@@ -14,6 +14,9 @@ import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import trading.domain.Stock;
+import trading.domain.StockType;
+
 public class Utils {
 	
 	private static Logger logger = Logger.getLogger(Utils.class);
@@ -117,5 +120,13 @@ public class Utils {
 			}
 		}
 		return in;
+	}
+	
+	public static void createVIXStats(Stock vix){
+		vix.getFundamentalData().setStockType(StockType.VIX);
+		vix.getFundamentalData().setCountry("USA");
+		vix.getFundamentalData().setName("VOLATILITY S&P 500");
+		vix.getFundamentalData().setExchange("CBOE");
+		vix.getFundamentalData().setOptionable(true);
 	}
 }
