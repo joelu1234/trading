@@ -32,9 +32,16 @@
 	<category name="org.mortbay">
 		<priority value="ERROR" />
 	</category>
-	<category name="org.springframework.scheduling.quartz">
+	<category name="org.eclipse.jetty">
 		<priority value="INFO" />
-	</category>	
+	</category>
+	<category name="org.springframework">
+		<priority value="INFO" />
+	</category>
+	<category name="org.quartz">
+		<priority value="INFO" />
+	</category>
+
 	<root>
 		<level value="DEBUG" />
 		<appender-ref ref="DEBUG_FILE" />

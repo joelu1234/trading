@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -53,9 +55,9 @@ public class TradingDataServiceImpl implements TradingDataService {
 	// private String googleOptionUrl;
 
 	private TradingDataDao dao;
-
 	private Map<String, Stock> stocks = new HashMap<String, Stock>();
-
+    private Map<String, Map<String,Set<String>>> categories = new TreeMap<String, Map<String,Set<String>>>();
+	
 	public TradingDataDao getDao() {
 		return dao;
 	}
@@ -69,7 +71,11 @@ public class TradingDataServiceImpl implements TradingDataService {
 	}
 
 	public Stock getStock(String ticker) {
-		return stocks.get(ticker);
+		return stocks.get(ticker.toUpperCase());
+	}
+
+	public Map<String, Map<String, Set<String>>> getCategories() {
+		return categories;
 	}
 
 	public Map<String, List<String>> getPortfolio() throws Exception {
@@ -154,6 +160,54 @@ public class TradingDataServiceImpl implements TradingDataService {
 		}
 	}
 
+	private void createCategories()
+	{
+		Map<String, Map<String,Set<String>>> map = new TreeMap<String, Map<String,Set<String>>>();
+		for(Stock stock : stocks.values()){
+			String sector=stock.getFundamentalData().getSector();
+			String indu=stock.getFundamentalData().getIndustry();
+			Map<String,Set<String>> subMap=map.get(sector);
+			if(subMap==null){
+				subMap = new TreeMap<String,Set<String>>();
+				map.put(sector, subMap);
+			}
+			Set<String> set=subMap.get(indu);
+			if(set==null){
+				set= new TreeSet<String>();
+				subMap.put(indu, set);
+			}
+			set.add(stock.getTicker());	
+		}
+		this.categories=map;
+	}
+	
+	public Stock reload(String ticker) throws Exception {
+		Stock stock = getStock(ticker);
+		if(stock==null){
+			throw new Exception("Invalid ticker "+ticker);
+		}
+		
+		ArrayList<Stock> tempList = new ArrayList<Stock>();
+		tempList.add(stock);
+		logger.debug("Fetch stock stats for "+ticker);
+		List<Stock> failedStocks = fetchFundamentalData(tempList);
+        if(failedStocks.size()>0){
+			throw new Exception("Unable to fetch stats, ticker "+ticker);
+		}
+		logger.debug("Save stock stats");
+		dao.saveStats(stocks.values());
+
+		logger.debug("Fetch stock quotes for "+ticker);
+		fetchQuotes(tempList);
+		logger.debug("Save stock quotes");
+		dao.saveQuotes(stocks.values());
+		logger.debug("Fetch stock options for "+ ticker);
+		fetchOptionData(tempList);
+		logger.debug("Save stock options");
+		dao.saveOptions(stocks.values());	
+		return stock;
+	}
+	
 	public void loadStocks() throws Exception {
 
 		Map<String, List<String>> portMap = dao.getPortfolio();
@@ -226,6 +280,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 
 		logger.debug("Save stock options");
 		dao.saveOptions(stocks.values());
+		createCategories();
 	}
 
 	public void saveStats() throws Exception {

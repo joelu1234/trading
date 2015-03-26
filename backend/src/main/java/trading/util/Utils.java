@@ -127,6 +127,8 @@ public class Utils {
 		vix.getFundamentalData().setCountry("USA");
 		vix.getFundamentalData().setName("VOLATILITY S&P 500");
 		vix.getFundamentalData().setExchange("CBOE");
+		vix.getFundamentalData().setSector("VOLATILITY");;
+		vix.getFundamentalData().setIndustry("VOLATILITY");
 		vix.getFundamentalData().setOptionable(true);
 	}
 }
