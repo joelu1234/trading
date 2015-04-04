@@ -23,7 +23,7 @@ public class TradingServer implements Runnable {
 	public static final String URL_STATUS = "/status";
 	public static final String PATH_CONTEXT = "/";
 
-	private static Properties props = new Properties();
+	private Properties props = new Properties();
 	private File warPath;
 	private File webXmlPath;
 	
