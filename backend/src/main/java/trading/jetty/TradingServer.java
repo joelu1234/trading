@@ -19,8 +19,6 @@ public class TradingServer implements Runnable {
 	
 	final public static String FILE_CONF = "config/jetty.properties";
 	final public static String DIR_CONFIG = "config";
-
-	public static final String URL_STATUS = "/status";
 	public static final String PATH_CONTEXT = "/";
 
 	private Properties props = new Properties();

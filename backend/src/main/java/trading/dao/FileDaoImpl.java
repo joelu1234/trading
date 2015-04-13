@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import trading.domain.AlgoResult;
 import trading.domain.FundamentalData;
 import trading.domain.OptionData;
 import trading.domain.Quote;
@@ -37,45 +38,46 @@ import trading.domain.Stock;
 import trading.util.Constants;
 import trading.util.CustomObjectMapper;
 
-public class FileDaoImpl implements TradingDataDao{
+public class FileDaoImpl implements TradingDataDao {
 
 	private static Logger logger = Logger.getLogger(TradingDataDao.class);
-	
+
 	final public static String DIR_DATA = "stockdata";
-	final public static String DIR_PORTFOLIO = DIR_DATA+"/portfolio";
-	final public static String FILE_HOLIDAY = DIR_DATA+"/holidays.properties";
-	
+	final public static String DIR_PORTFOLIO = DIR_DATA + "/portfolio";
+	final public static String FILE_HOLIDAY = DIR_DATA + "/holidays.properties";
+	final public static String FILE_ALGO_DEF = DIR_DATA + "/algodef.properties";
+
 	private File statsFile;
 	private File quoteFile;
 	private File optionFile;
-	
-	@Value( "${data.stats.file}" )
+	private File algoFile;
+
+	@Value("${data.stats.file}")
 	private String statsFileName;
-	@Value( "${data.quote.file}" )
+	@Value("${data.quote.file}")
 	private String quoteFileName;
-	@Value( "${data.option.file}" )
+	@Value("${data.option.file}")
 	private String optionFileName;
-	
+	@Value("${data.algo.file}")
+	private String algoFileName;
+
 	private Map<String, List<String>> portfolio = new HashMap<String, List<String>>();
-	
-	private Set<Date> holidays = new HashSet<Date>();
-		
+
 	@PostConstruct
 	public void init() throws Exception {
-		
+
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		File rootDir=(new File(loader.getResource(DIR_DATA).toURI()));
+		File rootDir = (new File(loader.getResource(DIR_DATA).toURI()));
 		statsFile = new File(rootDir, statsFileName + ".zip");
 		quoteFile = new File(rootDir, quoteFileName + ".zip");
 		optionFile = new File(rootDir, optionFileName + ".zip");
-		
-		logger.debug("Load Portfolio...");		
+		algoFile = new File(rootDir, algoFileName);
+
+		logger.debug("Load Portfolio...");
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
-		logger.debug("Portfolio: "+portfolio);
-		
-		loadHolidays(loader);
+		logger.debug("Portfolio: " + portfolio);
 	}
-	
+
 	private void loadPortfolio(URL dirUri) throws URISyntaxException, FileNotFoundException, IOException {
 		File dir = new File(dirUri.toURI());
 		for (String name : dir.list()) {
@@ -86,7 +88,7 @@ public class FileDaoImpl implements TradingDataDao{
 				continue;
 			stocks.load(new FileInputStream(f));
 			for (String stock : stocks.stringPropertyNames()) {
-				stock=stock.replaceAll("\\.", "-"); //BF.B change to BF-B
+				stock = stock.replaceAll("\\.", "-"); // BF.B change to BF-B
 				List<String> indices = portfolio.get(stock);
 				if (indices == null) {
 					indices = new ArrayList<String>();
@@ -96,17 +98,7 @@ public class FileDaoImpl implements TradingDataDao{
 			}
 		}
 	}
-	
-	private void loadHolidays(ClassLoader loader) throws Exception {
-		logger.debug("Load holidays...");
-		Properties props = new Properties();
-		props.load(loader.getResourceAsStream(FILE_HOLIDAY));
-		logger.debug("Holidays: "+props);
-		for (String str : props.stringPropertyNames()) {
-			holidays.add(new SimpleDateFormat(Constants.DATE_FORMAT).parse(str));
-		}
-	}
-		
+
 	private byte[] readFromZipFile(File file, String entryName) throws IOException {
 		ZipFile zFile = null;
 		try {
@@ -212,7 +204,39 @@ public class FileDaoImpl implements TradingDataDao{
 	}
 
 	public Set<Date> getHolidays() throws Exception {
+		Set<Date> holidays = new HashSet<Date>();
+		logger.debug("Load holidays...");
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		Properties props = new Properties();
+		props.load(loader.getResourceAsStream(FILE_HOLIDAY));
+		logger.debug("Holidays: " + props);
+		for (String str : props.stringPropertyNames()) {
+			holidays.add(new SimpleDateFormat(Constants.DATE_FORMAT).parse(str));
+		}
 		return holidays;
 	}
-	
+
+	public Set<String> getAlgoNames() throws Exception {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		logger.debug("Load algo names...");
+		Properties props = new Properties();
+		props.load(loader.getResourceAsStream(FILE_ALGO_DEF));
+		return props.stringPropertyNames();
+
+	}
+
+	public Map<String, List<AlgoResult>> loadAlgoResults() throws Exception {
+		if (algoFile.exists()) {
+			return getObjectMapper().readValue(algoFile, new TypeReference<HashMap<String, List<AlgoResult>>>() {
+			});
+		} else {
+			return new HashMap<String, List<AlgoResult>>();
+		}
+
+	}
+
+	public void saveAlgoResults(Map<String, List<AlgoResult>> results) throws Exception {
+		getObjectMapper().writeValue(algoFile, results);
+	}
+
 }

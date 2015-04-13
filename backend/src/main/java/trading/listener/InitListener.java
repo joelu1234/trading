@@ -34,6 +34,8 @@ public final class InitListener implements ServletContextListener {
 			TradingDataService dataService = (TradingDataService) springContext.getBean("dataService");
 			logger.info("Load in stocks");
 			dataService.loadStocks(Constants.LOAD_TYPE_STARTUP);
+			logger.info("Load in algo results");
+			dataService.loadAlgoResults();
 		} catch (Throwable e) {
 			logger.error("Inside contextInitialized", e);
 		}

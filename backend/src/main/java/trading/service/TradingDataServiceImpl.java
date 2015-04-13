@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 
 import trading.dao.TradingDataDao;
+import trading.domain.AlgoResult;
 import trading.domain.Quote;
 import trading.domain.Stock;
 import trading.domain.StockType;
@@ -58,7 +59,8 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private TradingDataDao dao;
 	private Map<String, Stock> stocks = new HashMap<String, Stock>();
 	private Map<String, Map<String, Set<String>>> categories = new TreeMap<String, Map<String, Set<String>>>();
-
+    private Map<String, List<AlgoResult>> algoResults = new HashMap<String, List<AlgoResult>>();
+    
 	public TradingDataDao getDao() {
 		return dao;
 	}
@@ -305,6 +307,22 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private boolean isHoliday(Date date) throws Exception {
 		Set<Date> holidays = dao.getHolidays();
 		return holidays != null && holidays.contains(DateUtils.truncate(date, Calendar.DATE));
+	}
+
+	public Set<String> getAlgoNames() throws Exception {
+		return dao.getAlgoNames();
+	}
+
+	public void loadAlgoResults() throws Exception {
+		this.algoResults=dao.loadAlgoResults();
+	}
+
+	public Map<String, List<AlgoResult>> getAlgoResults() {
+		return this.algoResults;
+	}
+
+	public void saveAlgoResults() throws Exception {
+		dao.saveAlgoResults(this.algoResults);
 	}
 
 }

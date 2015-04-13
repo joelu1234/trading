@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import trading.domain.AlgoResult;
 import trading.domain.Stock;
 
 public interface TradingDataDao {
@@ -15,11 +16,17 @@ public interface TradingDataDao {
 	Set<Date>  getHolidays() throws Exception;
 	
 	Map<String, Stock> loadStocks() throws Exception;
+	
+	Set<String> getAlgoNames()  throws Exception;
 
 	void saveStats(Collection<Stock> stocks) throws Exception;
 
 	void saveQuotes(Collection<Stock> stocks) throws Exception;
 
 	void saveOptions(Collection<Stock> stocks) throws Exception;
+	
+	Map<String, List<AlgoResult>> loadAlgoResults() throws Exception;
+	
+	void saveAlgoResults(Map<String, List<AlgoResult>> results) throws Exception;
 
 }
