@@ -12,6 +12,8 @@ public class AlgoResult implements Comparable<AlgoResult> {
 	private Date date;
 	private String ticker;
 	private String algoName;
+	private boolean isBuy;
+	private Properties props = new Properties();
 
 	public Date getDate() {
 		return date;
@@ -38,11 +40,11 @@ public class AlgoResult implements Comparable<AlgoResult> {
 	}
 
 	public boolean isBuy() {
-		return buy;
+		return isBuy;
 	}
 
 	public void setBuy(boolean buy) {
-		this.buy = buy;
+		this.isBuy = buy;
 	}
 
 	public Properties getProps() {
@@ -53,25 +55,9 @@ public class AlgoResult implements Comparable<AlgoResult> {
 		this.props = props;
 	}
 
-	private boolean buy;
-	private Properties props = new Properties();
-
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
-
-	public static void main(String[] args) throws Exception {
-		Quote q = new Quote();
-		q.setDate(new Date());
-		q.setOpen(1.11f);
-		q.setLow(1.10f);
-		q.setHigh(1.13f);
-		q.setClose(1.12f);
-		q.setVolume(100);
-
-		String str = q.toString();
-		System.out.println(str);
 	}
 
 	public int compareTo(AlgoResult o) {

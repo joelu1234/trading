@@ -322,6 +322,19 @@ public class TradingDataServiceImpl implements TradingDataService {
 	}
 
 	public void saveAlgoResults() throws Exception {
+		Date year5Ago = DateUtils.addWeeks(new Date(), -5);
+		Collection<List<AlgoResult>> c = algoResults.values();
+		for(List<AlgoResult> list : c){
+			AlgoResult[] array = list.toArray(new AlgoResult[0]);
+			for(AlgoResult r : array){
+				if(r.getDate().before(year5Ago)){
+					list.remove(r);
+				}
+				else{
+					break;
+				}
+			}
+		}
 		dao.saveAlgoResults(this.algoResults);
 	}
 
