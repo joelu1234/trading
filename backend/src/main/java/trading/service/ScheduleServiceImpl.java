@@ -37,6 +37,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 		}
 		try {
 			runAnalysis();
+			dataService.saveAlgoResults();
 		} catch (Exception e) {
 			logger.error("runAnalysis failure", e);
 		}
@@ -65,8 +66,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 		for(Future<String> f : futures){
 			logger.debug(f.get() + " thread completed");
 		}
-		
-		
 		executor.shutdown();
 	}
 }

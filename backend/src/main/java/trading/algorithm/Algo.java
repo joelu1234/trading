@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import trading.domain.AlgoResult;
+import trading.domain.TrendLine;
 import trading.service.TradingDataService;
 
 public abstract class Algo implements Callable<String> {
@@ -28,13 +29,33 @@ public abstract class Algo implements Callable<String> {
 		}
 	}
 	
-	protected void addAlgoResults(String ticker, AlgoResult result) {
+	protected void addAlgoResult(AlgoResult result) {
 		Map<String, List<AlgoResult>> map = this.dataService.getAlgoResults();
-		List<AlgoResult> list = map.get(ticker);
+		List<AlgoResult> list = map.get(result.getTicker());
 		if (list == null) {
 			list = new ArrayList<AlgoResult>();
-			map.put(ticker, list);
+			map.put(result.getTicker(), list);
 		}
 		list.add(result);
 	}
+	
+	protected List<TrendLine> getTrendLines(String ticker) {
+		Map<String, List<TrendLine>> map = this.dataService.getTrendLines();
+		List<TrendLine> list = map.get(ticker);
+		if (list == null) {
+			list = new ArrayList<TrendLine>();
+		}
+		return list;
+	}
+	
+	protected void addTrendLine(TrendLine line) {
+		Map<String, List<TrendLine>> map = this.dataService.getTrendLines();
+		List<TrendLine> list = map.get(line.getTicker());
+		if (list == null) {
+			list = new ArrayList<TrendLine>();
+			map.put(line.getTicker(), list);
+		}
+		list.add(line);
+	}
+	
 }

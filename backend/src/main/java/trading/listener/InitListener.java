@@ -36,6 +36,8 @@ public final class InitListener implements ServletContextListener {
 			dataService.loadStocks(Constants.LOAD_TYPE_STARTUP);
 			logger.info("Load in algo results");
 			dataService.loadAlgoResults();
+			logger.info("Load in trend lines");
+			dataService.loadTrendLines();
 		} catch (Throwable e) {
 			logger.error("Inside contextInitialized", e);
 		}

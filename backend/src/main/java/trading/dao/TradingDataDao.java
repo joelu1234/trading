@@ -8,6 +8,7 @@ import java.util.Set;
 
 import trading.domain.AlgoResult;
 import trading.domain.Stock;
+import trading.domain.TrendLine;
 
 public interface TradingDataDao {
 
@@ -28,5 +29,9 @@ public interface TradingDataDao {
 	Map<String, List<AlgoResult>> loadAlgoResults() throws Exception;
 	
 	void saveAlgoResults(Map<String, List<AlgoResult>> results) throws Exception;
+	
+	Map<String, List<TrendLine>> loadTrendLines() throws Exception;
+	
+	void saveTrendLines(Map<String, List<TrendLine>> lines) throws Exception;
 
 }

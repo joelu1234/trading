@@ -6,12 +6,15 @@ import java.util.Set;
 
 import trading.domain.AlgoResult;
 import trading.domain.Stock;
+import trading.domain.TrendLine;
 
 public interface TradingDataService {
 
 	void loadStocks(int loadType) throws Exception;
 	
 	void loadAlgoResults() throws Exception;
+	
+	void loadTrendLines() throws Exception;
 
 	void saveStats() throws Exception;
 
@@ -34,4 +37,8 @@ public interface TradingDataService {
 	Map<String, List<AlgoResult>> getAlgoResults();
 	
 	void saveAlgoResults() throws Exception;
+	
+	Map<String, List<TrendLine>> getTrendLines();
+	
+	void saveTrendLines() throws Exception;
 }

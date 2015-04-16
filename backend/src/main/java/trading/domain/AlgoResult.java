@@ -8,7 +8,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 public class AlgoResult implements Comparable<AlgoResult> {
-	public static final String DATE_FORMAT = "yyyyMMdd";
 	private Date date;
 	private String ticker;
 	private String algoName;

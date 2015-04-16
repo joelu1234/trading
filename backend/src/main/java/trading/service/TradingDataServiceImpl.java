@@ -21,6 +21,7 @@ import trading.domain.AlgoResult;
 import trading.domain.Quote;
 import trading.domain.Stock;
 import trading.domain.StockType;
+import trading.domain.TrendLine;
 import trading.indicator.BollingerBands;
 import trading.indicator.K;
 import trading.indicator.MovingAverage;
@@ -60,6 +61,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private Map<String, Stock> stocks = new HashMap<String, Stock>();
 	private Map<String, Map<String, Set<String>>> categories = new TreeMap<String, Map<String, Set<String>>>();
     private Map<String, List<AlgoResult>> algoResults = new HashMap<String, List<AlgoResult>>();
+    private Map<String, List<TrendLine>> trendLines = new HashMap<String, List<TrendLine>>();
     
 	public TradingDataDao getDao() {
 		return dao;
@@ -292,14 +294,17 @@ public class TradingDataServiceImpl implements TradingDataService {
 		createCategories();
 	}
 
+	@Override
 	public void saveStats() throws Exception {
 		dao.saveStats(stocks.values());
 	}
 
+	@Override
 	public void saveQuotes() throws Exception {
 		dao.saveQuotes(stocks.values());
 	}
 
+	@Override
 	public void saveOptions() throws Exception {
 		dao.saveOptions(stocks.values());
 	}
@@ -309,18 +314,32 @@ public class TradingDataServiceImpl implements TradingDataService {
 		return holidays != null && holidays.contains(DateUtils.truncate(date, Calendar.DATE));
 	}
 
+	@Override
 	public Set<String> getAlgoNames() throws Exception {
 		return dao.getAlgoNames();
 	}
 
+	@Override
 	public void loadAlgoResults() throws Exception {
 		this.algoResults=dao.loadAlgoResults();
 	}
-
+	
+	@Override
 	public Map<String, List<AlgoResult>> getAlgoResults() {
 		return this.algoResults;
 	}
+	
+	@Override
+	public void loadTrendLines() throws Exception {
+		this.trendLines=dao.loadTrendLines();
+	}
 
+	@Override
+	public Map<String, List<TrendLine>> getTrendLines() {
+		return this.trendLines;
+	}
+	
+	@Override
 	public void saveAlgoResults() throws Exception {
 		Date year5Ago = DateUtils.addWeeks(new Date(), -5);
 		Collection<List<AlgoResult>> c = algoResults.values();
@@ -336,6 +355,24 @@ public class TradingDataServiceImpl implements TradingDataService {
 			}
 		}
 		dao.saveAlgoResults(this.algoResults);
+	}
+
+	@Override
+	public void saveTrendLines() throws Exception {
+		Date yearAgo = DateUtils.addWeeks(new Date(), -1);
+		Collection<List<TrendLine>> c = trendLines.values();
+		for(List<TrendLine> list : c){
+			TrendLine[] array = list.toArray(new TrendLine[0]);
+			for(TrendLine r : array){
+				if(r.getDate2().before(yearAgo)){
+					list.remove(r);
+				}
+				else{
+					break;
+				}
+			}
+		}
+		dao.saveTrendLines(this.trendLines);
 	}
 
 }

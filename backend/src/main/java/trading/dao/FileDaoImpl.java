@@ -35,6 +35,7 @@ import trading.domain.FundamentalData;
 import trading.domain.OptionData;
 import trading.domain.Quote;
 import trading.domain.Stock;
+import trading.domain.TrendLine;
 import trading.util.Constants;
 import trading.util.CustomObjectMapper;
 
@@ -51,6 +52,7 @@ public class FileDaoImpl implements TradingDataDao {
 	private File quoteFile;
 	private File optionFile;
 	private File algoFile;
+	private File trendLineFile;
 
 	@Value("${data.stats.file}")
 	private String statsFileName;
@@ -60,6 +62,8 @@ public class FileDaoImpl implements TradingDataDao {
 	private String optionFileName;
 	@Value("${data.algo.file}")
 	private String algoFileName;
+	@Value("${data.trend.line.file}")
+	private String trendLineFileName;
 
 	private Map<String, List<String>> portfolio = new HashMap<String, List<String>>();
 
@@ -72,6 +76,7 @@ public class FileDaoImpl implements TradingDataDao {
 		quoteFile = new File(rootDir, quoteFileName + ".zip");
 		optionFile = new File(rootDir, optionFileName + ".zip");
 		algoFile = new File(rootDir, algoFileName);
+		trendLineFile = new File(rootDir, trendLineFileName);
 
 		logger.debug("Load Portfolio...");
 		loadPortfolio(loader.getResource(DIR_PORTFOLIO));
@@ -232,11 +237,26 @@ public class FileDaoImpl implements TradingDataDao {
 		} else {
 			return new HashMap<String, List<AlgoResult>>();
 		}
-
 	}
 
 	public void saveAlgoResults(Map<String, List<AlgoResult>> results) throws Exception {
 		getObjectMapper().writeValue(algoFile, results);
+	}
+
+	@Override
+	public Map<String, List<TrendLine>> loadTrendLines() throws Exception {
+		if (trendLineFile.exists()) {
+			return getObjectMapper().readValue(trendLineFile, new TypeReference<HashMap<String, List<TrendLine>>>() {
+			});
+		} else {
+			return new HashMap<String, List<TrendLine>>();
+		}
+	}
+
+	@Override
+	public void saveTrendLines(Map<String, List<TrendLine>> lines) throws Exception {
+		getObjectMapper().writeValue(trendLineFile, lines);
+		
 	}
 
 }
