@@ -10,7 +10,7 @@ public class FundamentalData {
 	private String sector;
 	private String industry;
 	private String country;
-	private StockType stockType;
+	private Stock.Type stockType;
 	private boolean optionable;
 
 	private Long shareOutstanding;
@@ -100,11 +100,11 @@ public class FundamentalData {
 		this.country = country;
 	}
 
-	public StockType getStockType() {
+	public Stock.Type getStockType() {
 		return stockType;
 	}
 
-	public void setStockType(StockType stockType) {
+	public void setStockType(Stock.Type stockType) {
 		this.stockType = stockType;
 	}
 

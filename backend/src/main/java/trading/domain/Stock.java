@@ -13,6 +13,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Stock {
+	
+	public enum Type {
+		STOCK, ETF, VIX
+	}
+	
 	private String ticker;
 	private FundamentalData fundamentalData = new FundamentalData();
 	private List<OptionData> options = new ArrayList<OptionData>();

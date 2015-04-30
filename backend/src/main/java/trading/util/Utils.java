@@ -15,7 +15,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import trading.domain.Stock;
-import trading.domain.StockType;
 
 public class Utils {
 
@@ -123,7 +122,7 @@ public class Utils {
 	}
 
 	public static void createVIXStats(Stock vix) {
-		vix.getFundamentalData().setStockType(StockType.VIX);
+		vix.getFundamentalData().setStockType(Stock.Type.VIX);
 		vix.getFundamentalData().setCountry("USA");
 		vix.getFundamentalData().setName("VOLATILITY S&P 500");
 		vix.getFundamentalData().setExchange("CBOE");

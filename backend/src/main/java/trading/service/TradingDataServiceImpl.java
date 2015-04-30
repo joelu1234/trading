@@ -20,7 +20,6 @@ import trading.dao.TradingDataDao;
 import trading.domain.AlgoResult;
 import trading.domain.Quote;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.domain.TrendLine;
 import trading.indicator.BollingerBands;
 import trading.indicator.K;
@@ -106,7 +105,7 @@ public class TradingDataServiceImpl implements TradingDataService {
 	private List<Stock> fetchQuotes(Collection<Stock> stocks) {
 		List<Stock> failedStocks = new ArrayList<Stock>();
 		for (Stock stock : stocks) {
-			if (stock.getFundamentalData().getStockType() != StockType.VIX) {
+			if (stock.getFundamentalData().getStockType() != Stock.Type.VIX) {
 				try {
 					GoogleQuoteReceiver.fetch(stock, googleQuoteUrl);
 				} catch (Throwable th) {
@@ -237,13 +236,13 @@ public class TradingDataServiceImpl implements TradingDataService {
 			List<String> indices = portMap.get(str);
 			if (indices != null) {
 				stock.getFundamentalData().setIndices(indices);
-				if (StockType.ETF.toString().equalsIgnoreCase(indices.get(0))) {
-					stock.getFundamentalData().setStockType(StockType.ETF);
-				} else if (StockType.VIX.toString().equalsIgnoreCase(indices.get(0))) {
+				if (Stock.Type.ETF.toString().equalsIgnoreCase(indices.get(0))) {
+					stock.getFundamentalData().setStockType(Stock.Type.ETF);
+				} else if (Stock.Type.VIX.toString().equalsIgnoreCase(indices.get(0))) {
 					Utils.createVIXStats(stock);
 
 				} else {
-					stock.getFundamentalData().setStockType(StockType.STOCK);
+					stock.getFundamentalData().setStockType(Stock.Type.STOCK);
 				}
 			}
 			stocks.put(str, stock);

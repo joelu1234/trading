@@ -5,19 +5,24 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class OptionData implements Comparable<OptionData> {
-	private boolean callType;
+	
+	public enum Type {
+		CALL, PUT
+	}
+	
+	private Type type;
 	private float strike;
 	private float last;
 	private long volume;
 	private long oi;
 	private float iv;
 
-	public boolean isCallType() {
-		return callType;
+	public Type getType() {
+		return type;
 	}
 
-	public void setCallType(boolean callType) {
-		this.callType = callType;
+	public void setType(Type type) {
+		this.type = type;
 	}
 
 	public float getStrike() {
@@ -64,7 +69,7 @@ public class OptionData implements Comparable<OptionData> {
 	public String toString() {
 		NumberFormat formatter = new DecimalFormat("#####.##");
 		StringBuilder sb = new StringBuilder();
-		sb.append(callType ? "call" : "put");
+		sb.append(type);
 		sb.append(",");
 		sb.append(formatter.format(strike));
 		sb.append(",");
@@ -82,7 +87,7 @@ public class OptionData implements Comparable<OptionData> {
 		OptionData optionData = new OptionData();
 		String[] strs = str.split(",");
 		int pos = 0;
-		optionData.setCallType("call".equals(strs[pos++]));
+		optionData.setType(Type.valueOf(strs[pos++]));
 		optionData.setStrike(Float.parseFloat(strs[pos++]));
 		optionData.setLast(Float.parseFloat(strs[pos++]));
 		optionData.setVolume(Long.parseLong(strs[pos++]));
@@ -92,6 +97,6 @@ public class OptionData implements Comparable<OptionData> {
 	}
 
 	public int compareTo(OptionData o) {
-		return new CompareToBuilder().append(this.callType, o.callType).append(this.strike, o.strike).toComparison();
+		return new CompareToBuilder().append(this.type, o.type).append(this.strike, o.strike).toComparison();
 	}
 }

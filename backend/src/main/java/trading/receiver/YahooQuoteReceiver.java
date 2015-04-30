@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import trading.domain.Quote;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Utils;
 
 
@@ -77,7 +76,7 @@ public class YahooQuoteReceiver {
 
 	private static String getUrl(Stock stock, Date startDate, Date endDate, String url) {
 		String ticker = stock.getTicker();
-		if (stock.getFundamentalData().getStockType()==StockType.VIX) {
+		if (stock.getFundamentalData().getStockType()==Stock.Type.VIX) {
 			ticker="%5E"+ticker;
 		} 
 		Calendar cal = Calendar.getInstance();

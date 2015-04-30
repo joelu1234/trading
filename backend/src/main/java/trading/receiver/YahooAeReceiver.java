@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 
 import trading.domain.QuartlyEps;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Utils;
 
 public class YahooAeReceiver {
@@ -36,7 +35,7 @@ public class YahooAeReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK && "USA".equalsIgnoreCase(stock.getFundamentalData().getCountry())) {
+		if (stock.getFundamentalData().getStockType() == Stock.Type.STOCK && "USA".equalsIgnoreCase(stock.getFundamentalData().getCountry())) {
 			url = String.format(url, stock.getTicker());
 			logger.debug("url=" + url);
 			Document doc = Utils.fetchJsoupDoc(url, 3);
@@ -56,7 +55,7 @@ public class YahooAeReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setStockType(Stock.Type.STOCK);
 		stock.getFundamentalData().setCountry("USA");
 		stock.getFundamentalData().setExchange("[NYSE]");
 		fetch(stock,"http://finance.yahoo.com/q/ae?s=%s");

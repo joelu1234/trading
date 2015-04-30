@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Constants;
 import trading.util.Utils;
 
@@ -37,7 +36,7 @@ public class ReutersStatsReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+		if (stock.getFundamentalData().getStockType() == Stock.Type.STOCK) {
 			String ticker = stock.getTicker().replace("-", ""); // BF-B changr to BFB
 			if (stock.getFundamentalData().getExchange().contains("NASD")) {
 				ticker = ticker + ".O";
@@ -59,7 +58,7 @@ public class ReutersStatsReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setStockType(Stock.Type.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
 		fetch(stock,"http://www.reuters.com/finance/stocks/financialHighlights?symbol=%s");
 		System.out.println(stock);

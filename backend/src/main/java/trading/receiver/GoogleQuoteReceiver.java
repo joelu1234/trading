@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import au.com.bytecode.opencsv.CSVReader;
 import trading.domain.Quote;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Utils;
 
 
@@ -172,7 +171,7 @@ public class GoogleQuoteReceiver {
 		} else if (stock.getFundamentalData().getExchange().contains("NYSE")) {
 			sb.append("NYSE%3A");
 		}
-		else if (stock.getFundamentalData().getStockType()==StockType.VIX) {
+		else if (stock.getFundamentalData().getStockType()==Stock.Type.VIX) {
 			sb.append("INDEXCBOE%3A");
 		}
 		sb.append(stock.getTicker().replaceAll("-","\\."));

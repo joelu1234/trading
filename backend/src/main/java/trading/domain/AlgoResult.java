@@ -8,10 +8,15 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 public class AlgoResult implements Comparable<AlgoResult> {
+	
+	public enum Type {
+		BUY, SELL
+	}
+	
 	private Date date;
 	private String ticker;
 	private String algoName;
-	private boolean isBuy;
+	private Type Type;
 	private Properties props = new Properties();
 
 	public Date getDate() {
@@ -38,12 +43,12 @@ public class AlgoResult implements Comparable<AlgoResult> {
 		this.algoName = algoName;
 	}
 
-	public boolean isBuy() {
-		return isBuy;
+	public Type getType() {
+		return Type;
 	}
 
-	public void setBuy(boolean buy) {
-		this.isBuy = buy;
+	public void setType(Type type) {
+		Type = type;
 	}
 
 	public Properties getProps() {

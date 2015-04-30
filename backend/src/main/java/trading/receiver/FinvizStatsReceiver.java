@@ -12,7 +12,6 @@ import org.jsoup.select.Elements;
 
 import trading.domain.AnalystOpinion;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Constants;
 import trading.util.Utils;
 
@@ -161,8 +160,8 @@ public class FinvizStatsReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK 
-				||stock.getFundamentalData().getStockType() == StockType.ETF) {
+		if (stock.getFundamentalData().getStockType() == Stock.Type.STOCK 
+				||stock.getFundamentalData().getStockType() == Stock.Type.ETF) {
 		    url = String.format(url,stock.getTicker());
 			logger.debug("url=" + url);
 			Document doc = Utils.fetchJsoupDoc(url, 3);
@@ -175,7 +174,7 @@ public class FinvizStatsReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("IWM");
-		stock.getFundamentalData().setStockType(StockType.ETF);
+		stock.getFundamentalData().setStockType(Stock.Type.ETF);
 		fetch(stock,"http://finviz.com/quote.ashx?t=%s");
 		System.out.println(stock);
 	}

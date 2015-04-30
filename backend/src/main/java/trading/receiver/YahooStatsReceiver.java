@@ -6,7 +6,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Constants;
 import trading.util.Utils;
 
@@ -69,7 +68,7 @@ public class YahooStatsReceiver {
 	}
 
 	public static void fetch(Stock stock, String url) throws Exception {
-		if (stock.getFundamentalData().getStockType() == StockType.STOCK) {
+		if (stock.getFundamentalData().getStockType() == Stock.Type.STOCK) {
 			url = String.format(url, stock.getTicker());
 			logger.debug("url=" + url);
 			Document doc = Utils.fetchJsoupDoc(url, 3);
@@ -82,7 +81,7 @@ public class YahooStatsReceiver {
 	public static void main(String[] args) throws Exception {
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setStockType(Stock.Type.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
 		fetch(stock,"http://finance.yahoo.com/q/ks?s=%s");
 		System.out.println(stock);

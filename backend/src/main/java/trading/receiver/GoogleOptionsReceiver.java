@@ -49,18 +49,18 @@ public class GoogleOptionsReceiver {
 		List<OptionData> results = new ArrayList<OptionData>();
 		List<Map<String, String>> puts = (List<Map<String, String>>) raw.get("puts");
 		if (puts != null && puts.size() > 0)
-			results.addAll(parseCallsPuts(puts, false));
+			results.addAll(parseCallsPuts(puts, OptionData.Type.PUT));
 		List<Map<String, String>> calls = (List<Map<String, String>>) raw.get("calls");
 		if (calls != null && calls.size() > 0)
-			results.addAll(parseCallsPuts(calls, true));
+			results.addAll(parseCallsPuts(calls, OptionData.Type.CALL));
 		return results;
 	}
 
-	private List<OptionData> parseCallsPuts(List<Map<String, String>> data, boolean calltype) {
+	private List<OptionData> parseCallsPuts(List<Map<String, String>> data, OptionData.Type type) {
 		List<OptionData> results = new ArrayList<OptionData>();
 		for (Map<String, String> map : data) {
 			OptionData o = parseOptionData(map);
-			o.setCallType(calltype);
+			o.setType(type);
 			results.add(o);
 		}
 		return results;

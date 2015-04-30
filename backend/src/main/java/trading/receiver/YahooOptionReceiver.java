@@ -11,7 +11,6 @@ import org.jsoup.select.Elements;
 
 import trading.domain.OptionData;
 import trading.domain.Stock;
-import trading.domain.StockType;
 import trading.util.Constants;
 import trading.util.Utils;
 
@@ -28,7 +27,7 @@ public class YahooOptionReceiver {
 			for (Element tr : trs) {
 				Elements tds = tr.getElementsByTag("td");
 				OptionData optionData = new OptionData();
-				optionData.setCallType(isCall);
+				optionData.setType(isCall?OptionData.Type.CALL:OptionData.Type.PUT);
 				optionData.setStrike(Float.parseFloat(tds.get(0).text().replace(",", "")));
 				optionData.setLast(Float.parseFloat(tds.get(2).text().replace(",", "")));
 				optionData.setVolume(Long.parseLong(tds.get(7).text().replace(",", "")));
@@ -45,7 +44,7 @@ public class YahooOptionReceiver {
 	public static void fetch(Stock stock, Date oeDate, String url) throws Exception {
 		if (stock.getFundamentalData().isOptionable()) {
 			String ticker=stock.getTicker();
-			if (stock.getFundamentalData().getStockType()==StockType.VIX) {
+			if (stock.getFundamentalData().getStockType()==Stock.Type.VIX) {
 				ticker="%5E"+ticker;
 			} 
 			url = String.format(url, ticker,getGMTSeconds(oeDate));
@@ -80,7 +79,7 @@ public class YahooOptionReceiver {
 		
 		Stock stock = new Stock();
 		stock.setTicker("T");
-		stock.getFundamentalData().setStockType(StockType.STOCK);
+		stock.getFundamentalData().setStockType(Stock.Type.STOCK);
 		stock.getFundamentalData().setExchange("[NYSE]");
 		stock.getFundamentalData().setOptionable(true);
 		fetch(stock, oeDate, "http://finance.yahoo.com/q/op?s=%s&&date=%s");
