@@ -40,7 +40,7 @@ public class KTest {
 
 	@Test
 	public void testCalcK14s() {
-		K.calcK(stock.getQuotes().toArray(new Quote[0]));
+		K.calc(stock.getQuotes().toArray(new Quote[0]));
 		String str1 = String.format("%.2f", stock.getQuotes().get(28).getPercentK());
 		String str2 = String.format("%.2f", k14s[28]);
 		assertEquals(str1, str2);
@@ -52,7 +52,7 @@ public class KTest {
 		q.setLow(127.40f );
 		q.setHigh(128.64f);
 		stock.getQuotes().add(q);
-		K.calcK(stock.getQuotes().toArray(new Quote[0]));
+		K.calc(stock.getQuotes().toArray(new Quote[0]));
 		str1 = String.format("%.2f", stock.getQuotes().get(29).getPercentK());
 		str2 = String.format("%.2f", k14s[29]);
 		assertEquals(str1, str2);		

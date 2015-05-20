@@ -12,12 +12,12 @@ public final class BollingerBands {
 	private BollingerBands() {
 	}
 
-	public static void calcBands(List<Quote> quotes) {
-		calcBands(quotes.toArray(new Quote[0]));
+	public static void calc(List<Quote> quotes) {
+		calc(quotes.toArray(new Quote[0]));
 	}
 
-	public static void calcBands(Quote[] quotes) {
-		MovingAverage.calcSimpleMA(quotes, DAYS);
+	public static void calc(Quote[] quotes) {
+		MovingAverage.calc(quotes, DAYS);
 		int end = quotes.length - 1;
 		int start = DAYS - 1;
 

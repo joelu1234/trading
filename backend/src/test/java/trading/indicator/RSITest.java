@@ -37,7 +37,7 @@ public class RSITest {
 
 	@Test
 	public void testCalcRSI14s() {
-		RSI.calcRSI(stock.getQuotes().toArray(new Quote[0]), 14);
+		RSI.calc(stock.getQuotes().toArray(new Quote[0]), 14);
 
 		String str1 = String.format("%.2f", stock.getQuotes().get(31).getRsi5());
 		String str2 = String.format("%.2f", rsi14s[31]);
@@ -48,7 +48,7 @@ public class RSITest {
 		q.setClose(43.13f);
 		stock.getQuotes().add(q);
 
-		RSI.calcRSI(stock.getQuotes().toArray(new Quote[0]), 14);
+		RSI.calc(stock.getQuotes().toArray(new Quote[0]), 14);
 
 		str1 = String.format("%.2f", stock.getQuotes().get(32).getRsi5());
 		str2 = String.format("%.2f", rsi14s[32]);

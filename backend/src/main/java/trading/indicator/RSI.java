@@ -10,15 +10,15 @@ public final class RSI {
 	private RSI() {
 	}
 	
-	public static void calcRSI(List<Quote> quotes) {
-		calcRSI(quotes.toArray(new Quote[0]));
+	public static void calc(List<Quote> quotes) {
+		calc(quotes.toArray(new Quote[0]));
 	}
 
-	public static void calcRSI(Quote[] quotes) {
-		calcRSI(quotes, DAYS);
+	public static void calc(Quote[] quotes) {
+		calc(quotes, DAYS);
 	}
 
-	public static void calcRSI(Quote[] quotes, int days) {
+	public static void calc(Quote[] quotes, int days) {
 		int end = quotes.length - 1;
 		int start = days;
         int dLess1=days-1;

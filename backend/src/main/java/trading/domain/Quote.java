@@ -19,6 +19,7 @@ public class Quote implements Comparable<Quote> {
 	private long volume;
 
 	private Map<Integer, Float> simpleMaMap = new HashMap<Integer, Float>();
+	private Map<Integer, Float> expMaMap = new HashMap<Integer, Float>();
 	private Float rsi5ns;
 	private Float rsi5ps;
 	private Float percentK;
@@ -91,6 +92,24 @@ public class Quote implements Comparable<Quote> {
 		simpleMaMap.put(days, ma);
 	}
 
+	public Map<Integer, Float> getExpMaMap() {
+		return expMaMap;
+	}
+
+	public void setExpMaMap(Map<Integer, Float> expMaMap) {
+		this.expMaMap = expMaMap;
+	}
+
+	@JsonIgnore
+	public Float getExpMA(int days) {
+		return expMaMap.get(days);
+	}
+
+	@JsonIgnore
+	public void setExpMA(int days, Float ma) {
+		expMaMap.put(days, ma);
+	}
+	
 	public Float getRsi5ns() {
 		return rsi5ns;
 	}

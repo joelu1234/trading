@@ -41,7 +41,7 @@ public class BollingerBandsTest {
 
 		Quote[] quotes = stock.getQuotes().toArray(new Quote[0]);
 
-		BollingerBands.calcBands(quotes);
+		BollingerBands.calc(quotes);
 
 		String str1 = String.format("%.2f", stock.getQuotes().get(22).getLowerBB20_2());
 		String str2 = String.format("%.2f", lowerBands[22]);

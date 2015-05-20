@@ -10,15 +10,15 @@ public final class K {
 	private K() {
 	}
 
-	public static void calcK(List<Quote> quotes) {
-		calcK(quotes.toArray(new Quote[0]), DAYS);
+	public static void calc(List<Quote> quotes) {
+		calc(quotes.toArray(new Quote[0]), DAYS);
 	}
 	
-	public static void calcK(Quote[] quotes) {
-		calcK(quotes, DAYS);
+	public static void calc(Quote[] quotes) {
+		calc(quotes, DAYS);
 	}
 
-	public static void calcK(Quote[] quotes, int days) {
+	public static void calc(Quote[] quotes, int days) {
 		int end = quotes.length - 1;
 		int start = days - 1;
 		int pos = start;

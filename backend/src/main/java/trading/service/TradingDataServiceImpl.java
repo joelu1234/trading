@@ -113,12 +113,12 @@ public class TradingDataServiceImpl implements TradingDataService {
 					failedStocks.add(stock);
 				}
 				List<Quote> quotes = stock.getQuotes();
-				BollingerBands.calcBands(quotes);
-				K.calcK(quotes);
-				MovingAverage.calcSimpleMA(quotes, 13);
-				MovingAverage.calcSimpleMA(quotes, 50);
-				MovingAverage.calcSimpleMA(quotes, 100);
-				RSI.calcRSI(quotes);
+				BollingerBands.calc(quotes);
+				K.calc(quotes);
+				MovingAverage.calc(quotes, 13);
+				MovingAverage.calc(quotes, 50);
+				MovingAverage.calc(quotes, 200);
+				RSI.calc(quotes);
 			} else {
 				try {
 					YahooQuoteReceiver.fetch(stock, yahooQuoteUrl);
